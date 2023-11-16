@@ -6,7 +6,22 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Bell</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>0.0.1</Version>
+    <Authors>kjs104901</Authors>
+    <Company>kjs104901</Company>
+    <Description>BellColorTextBox backend</Description>
+    <Copyright>kjs104901</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/kjs104901/BellColorTextBox</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ImGui.NET" Version="1.89.7.1" />

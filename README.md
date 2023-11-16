@@ -7,6 +7,15 @@ It allows the use of a desired rendering backend, and the directly supported bac
 ![screenshot](https://github.com/kjs104901/BellColorTextBox/blob/main/Documents/screenshot.PNG)
 
 
+## Dependency
+- BellColorTextBox.Net
+  - .Net 6.0
+
+- BellColorTextBox.ImGuiNet
+  - BellColorTextBox.Net
+  - ImGui.Net (1.89.7.1)
+
+
 ## Features 
 - Syntax highlighting 
 - Multiple carets

@@ -5,6 +5,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Bell</RootNamespace>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/kjs104901/BellColorTextBox</RepositoryUrl>
+    <Version>0.0.1</Version>
+    <Company>kjs104901</Company>
+    <Authors>kjs104901</Authors>
+    <Description>Abstracted text box library</Description>
+    <Copyright>kjs104901</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
