@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -16,13 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BellColorTextBox.ImGuiNet" Version="0.0.1" />
     <PackageReference Include="Veldrid" Version="4.9.0" />
     <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BellColorTextBox.ImGuiNet\BellColorTextBox.ImGuiNet.csproj" />
   </ItemGroup>
 
 
