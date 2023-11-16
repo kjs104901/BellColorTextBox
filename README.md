@@ -6,6 +6,12 @@ It allows the use of a desired rendering backend, and the directly supported bac
 
 ![screenshot](https://github.com/kjs104901/BellColorTextBox/blob/main/Documents/screenshot.PNG)
 
+## Nuget
+| Project | Nuget |
+| :-- | :-- |
+| BellColorTextBox.Net  | [![Nuget](https://img.shields.io/nuget/v/BellColorTextBox.Net?logo=nuget)](https://www.nuget.org/packages/BellColorTextBox.Net) |
+| BellColorTextBox.ImGuiNet | [![Nuget](https://img.shields.io/nuget/v/BellColorTextBox.ImGuiNet?logo=nuget)](https://www.nuget.org/packages/BellColorTextBox.ImGuiNet) |
+
 
 ## Dependency
 - BellColorTextBox.Net
