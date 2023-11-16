@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BellColorTextBox.Net", "BellColorTextBox.Net\BellColorTextBox.Net.csproj", "{9630A35B-D2EE-44A8-8E07-0B9BB718DAE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BellColorTextBox.ImGuiNet", "BellColorTextBox.ImGuiNet\BellColorTextBox.ImGuiNet.csproj", "{E2AC568C-F46C-450D-BB35-894E8C514B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BellColorTextBox.Demo.Net", "BellColorTextBox.Demo.Net\BellColorTextBox.Demo.Net.csproj", "{4FD07A61-6CEF-49D0-853E-B027D2C146F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9630A35B-D2EE-44A8-8E07-0B9BB718DAE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9630A35B-D2EE-44A8-8E07-0B9BB718DAE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9630A35B-D2EE-44A8-8E07-0B9BB718DAE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9630A35B-D2EE-44A8-8E07-0B9BB718DAE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2AC568C-F46C-450D-BB35-894E8C514B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2AC568C-F46C-450D-BB35-894E8C514B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2AC568C-F46C-450D-BB35-894E8C514B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2AC568C-F46C-450D-BB35-894E8C514B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FD07A61-6CEF-49D0-853E-B027D2C146F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FD07A61-6CEF-49D0-853E-B027D2C146F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FD07A61-6CEF-49D0-853E-B027D2C146F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FD07A61-6CEF-49D0-853E-B027D2C146F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95FBFD25-C475-4721-ADC6-FFE4BEA98069}
+	EndGlobalSection
+EndGlobal
