@@ -29,10 +29,18 @@ internal class Cache<T>
 
     internal T Get()
     {
-        if (_isDirty && DateTime.Now > _updateTime)
-            Update();
+        if (_updateIntervalMs > 0)
+        {
+            if (_isDirty && DateTime.Now > _updateTime)
+                Update();
+        }
+        else
+        {
+            if (_isDirty)
+                Update();
+        }
         
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
             Singleton.TextBox.CacheCounter.CountGet(_name);
         
         return _value;
@@ -40,16 +48,18 @@ internal class Cache<T>
 
     internal void SetDirty()
     {
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
             Singleton.TextBox.CacheCounter.CountSetDirty(_name);
         
         _isDirty = true;
-        _updateTime = DateTime.Now.AddMilliseconds(_updateIntervalMs);
+
+        if (_updateIntervalMs > 0)
+            _updateTime = DateTime.Now.AddMilliseconds(_updateIntervalMs);
     }
 
     private void Update()
     {
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             Singleton.TextBox.CacheCounter.CountUpdate(_name);
             UpdateStopwatch.Restart();
@@ -58,7 +68,7 @@ internal class Cache<T>
         _value = _updateFunc(_value);
         _isDirty = false;
         
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             UpdateStopwatch.Stop();
             Singleton.TextBox.CacheCounter.AddUpdateTime(_name, UpdateStopwatch.ElapsedMilliseconds);

@@ -24,8 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BellColorTextBox.Net" Version="0.0.1" />
     <PackageReference Include="ImGui.NET" Version="1.89.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BellColorTextBox.Net\BellColorTextBox.Net.csproj" />
   </ItemGroup>
 
 </Project>

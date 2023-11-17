@@ -41,8 +41,9 @@ internal abstract class Action
     {
         _caretsCommands.Clear();
 
+    
         SaveCarets(_startCarets);
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
             _startText = Singleton.TextBox.Text;
 
         for (int i = 0; i < CaretManager.Count; i++)
@@ -60,7 +61,7 @@ internal abstract class Action
 
         SaveCarets(_endCarets);
 
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             _endText = Singleton.TextBox.Text;
 
@@ -104,7 +105,7 @@ internal abstract class Action
             return;
         }
 
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             if (Singleton.TextBox.Text != _startText)
                 Logger.Error("RedoCommands: Text not match");
@@ -124,7 +125,7 @@ internal abstract class Action
 
         RestoreCarets(_endCarets);
 
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             if (Singleton.TextBox.Text != _endText)
                 Logger.Error("RedoCommands: Text not match");
@@ -139,7 +140,7 @@ internal abstract class Action
             return;
         }
 
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             if (Singleton.TextBox.Text != _endText)
                 Logger.Error("UndoCommands: Text not match");
@@ -160,7 +161,7 @@ internal abstract class Action
 
         RestoreCarets(_startCarets);
 
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             if (Singleton.TextBox.Text != _startText)
                 Logger.Error("UndoCommands: Text not match");
@@ -341,6 +342,22 @@ internal class InputCharAction : Action
     protected override List<Command> CreateCommands(Caret caret)
     {
         var commands = new List<Command>();
+        if (Singleton.TextBox.Overwrite)
+        {
+            if (LineManager.GetLine(caret.Position.LineIndex, out Line line))
+            {
+                int endCharIndex = caret.Position.CharIndex + _chars.Length;
+                if (endCharIndex > line.CharsCount)
+                    endCharIndex = line.CharsCount;
+
+                int toDelete = endCharIndex - caret.Position.CharIndex;
+                if (toDelete > 0)
+                {
+                    commands.Add(new DeleteCharCommand(_direction, toDelete));
+                }
+            }
+        }
+        
         commands.Add(new InputCharCommand(_direction, _chars));
         return commands;
     }

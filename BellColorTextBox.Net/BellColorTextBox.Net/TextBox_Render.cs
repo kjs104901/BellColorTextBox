@@ -135,14 +135,19 @@ public partial class TextBox
                     if (line.Folding.Folded)
                     {
                         Backend.RenderIcon(
-                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY),
+                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Fold,
+                            Theme.Foreground.ToVector());
+
+                        Backend.RenderIcon(
+                            new Vector2(lineStartX + currPosX + FontManager.GetFontWhiteSpaceWidth(), lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            GuiIcon.Ellipsis,
                             Theme.Foreground.ToVector());
                     }
                     else
                     {
                         Backend.RenderIcon(
-                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY),
+                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Unfold,
                             Theme.Foreground.ToVector());
                     }
@@ -175,11 +180,35 @@ public partial class TextBox
                 foreach (Coordinates caretPosition in row.RowSelection.CaretPositions)
                 {
                     float caretX = row.LineSub.GetCharPosition(caretPosition);
-                    Backend.RenderLine(
-                        new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
-                        new Vector2(lineStartX + caretX - 1.0f, lineTextEndY),
-                        Theme.Foreground.ToVector(),
-                        2.0f);
+
+                    string currString = " ";
+                    if (_imeComposition is { Length: > 0 } && false == ReadOnly)
+                    {
+                        currString = _imeComposition;
+                    }
+                    else
+                    {
+                        if (row.LineSub.Chars.Count > caretPosition.CharIndex)
+                            currString = StringPool<char>.Get(row.LineSub.Chars[caretPosition.CharIndex]);
+                    }
+
+                    if (Overwrite)
+                    {
+                        Backend.RenderRectangle(
+                            new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
+                            new Vector2(lineStartX + caretX - 1.0f + FontManager.GetFontWidth(currString), lineTextEndY),
+                            Theme.Foreground.ToVector());
+                        Backend.RenderText(new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
+                            currString, Theme.Background.ToVector());
+                    }
+                    else
+                    {
+                        Backend.RenderLine(
+                            new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
+                            new Vector2(lineStartX + caretX - 1.0f, lineTextEndY),
+                            Theme.Foreground.ToVector(),
+                            2.0f);
+                    }
                 }
             }
         }
@@ -187,7 +216,7 @@ public partial class TextBox
 
     private void DrawImeComposition(float lineStartX, float lineTextStartY, float lineTextEndY, ref float currPosX)
     {
-        if (_imeComposition is not { Length: > 0 })
+        if (_imeComposition is not { Length: > 0 } || ReadOnly)
             return;
 
         Backend.RenderText(new Vector2(lineStartX + currPosX, lineTextStartY), _imeComposition,

@@ -46,7 +46,7 @@ public partial class Language
             Theme.Token.Function);
 
         // Keyword
-        language.AddPattern(@"\b(public|private|protected|internal|class|struct|interface|enum|delegate|int|long|float|double|bool|char|string|object|byte|sbyte|short|ushort|uint|ulong|decimal|lock|new|override|virtual|abstract|sealed|static|readonly|extern|ref|out|in|params|using|namespace|true|false|null|this|base|operator|sizeof|typeof|stackalloc|nameof|async|await|volatile|unchecked|checked|unsafe|fixed|void|get|set)\b",
+        language.AddPattern(@"\b(public|private|protected|internal|class|struct|interface|enum|delegate|int|long|float|double|bool|char|string|object|byte|sbyte|short|ushort|uint|ulong|decimal|lock|new|override|virtual|abstract|sealed|static|readonly|extern|ref|out|in|params|using|namespace|true|false|null|this|base|operator|sizeof|typeof|stackalloc|nameof|async|await|volatile|unchecked|checked|unsafe|fixed|void|get|set|Byte|SByte|Short|UShort|Int|UInt|Long|ULong|Float|Double|Decimal)\b",
             Theme.Token.Keyword);
         
         // Keyword control

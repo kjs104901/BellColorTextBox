@@ -11,6 +11,10 @@ public partial class Language
 
         language.AddFolding("{", "}");
         language.AddFolding("[", "]");
+
+        // String
+        language.AddPattern(@"""[^""]*""",
+            Theme.Token.String);
         
         // Key
         language.AddPattern(@"(?<range>""([^\\""]|\\"")*"")\s*:",

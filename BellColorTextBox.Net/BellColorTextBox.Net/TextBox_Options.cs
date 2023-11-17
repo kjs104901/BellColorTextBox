@@ -107,6 +107,8 @@ public partial class TextBox
     }
 
     public Theme Theme = Theme.Dark();
+
+    public bool IsDebugMode { get; set; } = false;
 }
 
 public partial class TextBox

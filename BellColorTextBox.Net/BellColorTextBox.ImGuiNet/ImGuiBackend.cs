@@ -138,12 +138,21 @@ public class ImGuiBackend : IBackend
                 iconChar = '\uf107'; //angle-down
                 iconString = "\uf107";
                 break;
+            case GuiIcon.Ellipsis:
+                iconChar = '\uf141'; //ellipsis
+                iconString = "\uf141";
+                break;
         }
         
-        float posX = _drawPosOnPage.X + pos.X - (GetCharWidth(iconChar) / 2.0f);
-        float posY = _drawPosOnPage.Y + pos.Y;
+        float fontSize = ImGui.GetFont().FontSize;
 
-        ImGui.GetWindowDrawList().AddText(new Vector2(posX, posY),
+        float iconSize = fontSize * 3.0f / 4.0f;
+        float iconWidth = ImGuiTextBox.FontAwesome.GetCharAdvance(iconChar);
+
+        float posX = _drawPosOnPage.X + pos.X - (iconWidth / 2.0f);
+        float posY = _drawPosOnPage.Y + pos.Y - (iconSize / 2.0f);
+
+        ImGui.GetWindowDrawList().AddText(ImGuiTextBox.FontAwesome, iconSize, new Vector2(posX, posY),
             ImGui.ColorConvertFloat4ToU32(color), iconString);
     }
 

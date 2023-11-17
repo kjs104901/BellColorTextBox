@@ -23,8 +23,13 @@ public partial class TextBox
     
     private readonly StringBuilder _sb = new();
 
+    public int Id;
+    private static int _idCounter = 0;
+
     public TextBox(IBackend backend)
     {
+        Id = Interlocked.Increment(ref _idCounter);
+
         Backend = backend;
         _tabStringCache = new Cache<string>("TabString", string.Empty, UpdateTabString);
         Text = "";

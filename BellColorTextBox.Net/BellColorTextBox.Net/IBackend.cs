@@ -7,6 +7,7 @@ public enum GuiIcon
 {
     Fold,
     Unfold,
+    Ellipsis
 }
 
 public interface IBackend

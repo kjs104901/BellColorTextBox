@@ -32,7 +32,7 @@ public class Logger
     public static void Error(string message, [CallerMemberName] string callerMemberName = "")
     {
         Singleton.TextBox.Logger.AddLog(Level.Error, callerMemberName, message);
-        if (DevHelper.IsDebugMode)
+        if (Singleton.TextBox.IsDebugMode)
         {
             Debugger.Break();
         }

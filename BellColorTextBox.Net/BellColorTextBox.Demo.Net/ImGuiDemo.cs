@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Bell;
 using Bell.Languages;
 using ImGuiNET;
@@ -58,8 +59,10 @@ class ImGuiDemo
         Names = new []{ "D2Coding", "MaruBuri", "NanumGothic" },
         Index = 0
     };
-    private static float _fontSize = 18.0f;
-    
+
+    private static bool _isDebugMode = false;
+
+
     public static Thread ThreadStart()
     {
         var thread = new Thread(ThreadMain)
@@ -91,10 +94,23 @@ class ImGuiDemo
             imGuiRenderer.WindowResized(sdl2Window.Width, sdl2Window.Height);
         };
 
+        ImFontPtr fontPtr;
+        GCHandle fontHandle = GCHandle.Alloc(Fonts.D2Coding, GCHandleType.Pinned);
+        try
+        {
+            fontPtr = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(fontHandle.AddrOfPinnedObject(),
+                Fonts.D2Coding.Length, 16.0f, null, ImGui.GetIO().Fonts.GetGlyphRangesKorean());
+        }
+        finally
+        {
+            fontHandle.Free();
+        }
+        ImGuiTextBox.LoadFontAwesome();
+        imGuiRenderer.RecreateFontDeviceTexture(graphicsDevice);
+
         var stopwatch = Stopwatch.StartNew();
 
-        ImGuiTextBox imGuiBellTextBox = new(() => { imGuiRenderer.RecreateFontDeviceTexture(graphicsDevice); });
-        imGuiBellTextBox.SetFont(Fonts.D2Coding, _fontSize, ImGui.GetIO().Fonts.GetGlyphRangesKorean());
+        ImGuiTextBox imGuiBellTextBox = new();
         imGuiBellTextBox.Text = SourceCodeExample.CSharp;
 
         while (sdl2Window.Exists)
@@ -170,14 +186,17 @@ class ImGuiDemo
                     else
                         imGuiBellTextBox.Text = string.Empty;
                 }
-                
+
                 ImGui.Separator();
-                if (ImGui.Combo("Font", ref _font.Index, _font.Names, _font.Names.Length))
-                    imGuiBellTextBox.SetFont(_font.Options[_font.Index], _fontSize, ImGui.GetIO().Fonts.GetGlyphRangesKorean());
-                
+                if (ImGui.Checkbox("IsDebugMode", ref _isDebugMode))
+                    imGuiBellTextBox.IsDebugMode = _isDebugMode;
+
                 // TextBox
                 ImGui.TableNextColumn();
-                imGuiBellTextBox.Render(new Vector2(-1, -1));
+
+                ImGui.PushFont(fontPtr);
+                imGuiBellTextBox.Render();
+                ImGui.PopFont();
                 
                 ImGui.EndTable();
             }

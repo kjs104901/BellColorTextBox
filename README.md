@@ -4,7 +4,7 @@ The bell text box is an abstracted text box library that supports simple syntax 
 
 It allows the use of a desired rendering backend, and the directly supported backends will continue to be added
 
-![screenshot](https://github.com/kjs104901/BellColorTextBox/blob/main/Documents/screenshot.PNG)
+![screenshot](https://raw.githubusercontent.com/kjs104901/BellColorTextBox/main/Documents/screenshot.PNG)
 
 ## Nuget
 | Project | Nuget |

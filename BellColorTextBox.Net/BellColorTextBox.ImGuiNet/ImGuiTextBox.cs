@@ -9,9 +9,6 @@ namespace Bell;
 public class ImGuiTextBox
 {
     private readonly TextBox _textBox = new(new ImGuiBackend());
-
-    private ImFontPtr _fontPtr;
-    private readonly Action _onFontLoaded;
     
     // Options
     public bool ReadOnly { get => _textBox.ReadOnly; set => _textBox.ReadOnly = value; }
@@ -27,62 +24,23 @@ public class ImGuiTextBox
     public int TabSize { get => _textBox.TabSize; set => _textBox.TabSize = value; }
     public Language Language { get => _textBox.Language; set => _textBox.Language = value; }
     public string Text { get => _textBox.Text; set => _textBox.Text = value; }
-    
-    public ImGuiTextBox(Action onFontLoaded)
-    {
-        _onFontLoaded = onFontLoaded;
-        SetDefaultFont();
-    }
+    public bool IsDebugMode { get => _textBox.IsDebugMode; set => _textBox.IsDebugMode = value; }
 
-    public void SetDefaultFont()
+    public static bool IsFontAwesomeLoaded;
+    public static ImFontPtr FontAwesome;
+    public static void LoadFontAwesome()
     {
-        _fontPtr = ImGui.GetIO().Fonts.AddFontDefault(null);
-        LoadFontAwesome(13.0f);
-        ImGui.GetIO().Fonts.Build();
-        _onFontLoaded();
-    }
-    
-    public void SetFont(string fontFile, float fontSize, IntPtr glyphRanges)
-    {
-        _fontPtr = ImGui.GetIO().Fonts.AddFontFromFileTTF(fontFile, fontSize, null, glyphRanges);
-        LoadFontAwesome(fontSize);
-        ImGui.GetIO().Fonts.Build();
-        _onFontLoaded();
-    }
-
-    public void SetFont(byte[] fontBytes, float fontSize, IntPtr glyphRanges)
-    {
-        GCHandle fontHandle = GCHandle.Alloc(fontBytes, GCHandleType.Pinned);
-        try
-        {
-            IntPtr fontPtr = fontHandle.AddrOfPinnedObject();
-            _fontPtr = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(fontPtr, fontBytes.Length, fontSize, null, glyphRanges);
-            LoadFontAwesome(fontSize);
-            ImGui.GetIO().Fonts.Build();
-            _onFontLoaded();
-        }
-        finally
-        {
-            fontHandle.Free();
-        }
-    }
-
-    private void LoadFontAwesome(float fontSize)
-    {
+        float fontSize = 12.0f;
         GCHandle glyphHandle = GCHandle.Alloc(new ushort[] { 0xe005, 0xf8ff, 0x0000 }, GCHandleType.Pinned);
         GCHandle fontHandle = GCHandle.Alloc(Fonts.fa_solid_900, GCHandleType.Pinned);
+
         try
         {
-            IntPtr glyphPtr = glyphHandle.AddrOfPinnedObject();
-            IntPtr fontPtr = fontHandle.AddrOfPinnedObject();
-            unsafe
-            {
-                ImFontConfigPtr nativeConfig = ImGuiNative.ImFontConfig_ImFontConfig();
-                nativeConfig.MergeMode = true;
-
-                ImGui.GetIO().Fonts.AddFontFromMemoryTTF( fontPtr, Fonts.fa_solid_900.Length,
-                    fontSize / 2.0f, nativeConfig, glyphPtr );
-            }
+            FontAwesome = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(fontHandle.AddrOfPinnedObject(),
+                Fonts.fa_solid_900.Length,
+                fontSize, null, glyphHandle.AddrOfPinnedObject());
+            ImGui.GetIO().Fonts.Build();
+            IsFontAwesomeLoaded = true;
         }
         finally
         {
@@ -91,25 +49,30 @@ public class ImGuiTextBox
         }
     }
 
+    public void Render()
+    {
+        Render(new Vector2(-1, -1));
+    }
+
     public void Render(Vector2 size)
     {
-        if (DevHelper.IsDebugMode)
+        if (_textBox.IsDebugMode)
         {
-            if (ImGui.BeginTable("##ImGuiTextBoxDebugTable", 3, ImGuiTableFlags.Resizable))
+            if (ImGui.BeginTable($"##ImGuiTextBoxDebugTable_{_textBox.Id}", 3, ImGuiTableFlags.Resizable))
             {
-                ImGui.TableSetupColumn("##ImGuiTextBoxDebugTable_Column1", ImGuiTableColumnFlags.None, 100);
-                ImGui.TableSetupColumn("##ImGuiTextBoxDebugTable_Column2", ImGuiTableColumnFlags.None, 100);
-                ImGui.TableSetupColumn("##ImGuiTextBoxDebugTable_Column3", ImGuiTableColumnFlags.None, 200);
+                ImGui.TableSetupColumn($"##ImGuiTextBoxDebugTable_Column1_{_textBox.Id}", ImGuiTableColumnFlags.None, 100);
+                ImGui.TableSetupColumn($"##ImGuiTextBoxDebugTable_Column2_{_textBox.Id}", ImGuiTableColumnFlags.None, 100);
+                ImGui.TableSetupColumn($"##ImGuiTextBoxDebugTable_Column3_{_textBox.Id}", ImGuiTableColumnFlags.None, 200);
 
                 ImGui.TableNextRow();
 
                 ImGui.TableNextColumn();
                 string debugString = _textBox.GetDebugString();
-                ImGui.InputTextMultiline("##Debug", ref debugString, (uint)debugString.Length, new Vector2(-1, -1));
+                ImGui.InputTextMultiline($"##ImGuiTextBoxDebug_{_textBox.Id}", ref debugString, (uint)debugString.Length, new Vector2(-1, -1));
                 
                 ImGui.TableNextColumn();
                 string logString = string.Join("\n", _textBox.GetLogs());
-                ImGui.InputTextMultiline("##Logs", ref logString, (uint)logString.Length, new Vector2(-1, -1));
+                ImGui.InputTextMultiline($"##ImGuiTextBoxLogs_{_textBox.Id}", ref logString, (uint)logString.Length, new Vector2(-1, -1));
                 
                 ImGui.TableNextColumn();
                 RenderTextBox(size);
@@ -122,10 +85,16 @@ public class ImGuiTextBox
         }
     }
 
+    private string _childId = string.Empty;
+    private string _windowId = string.Empty;
+
     private void RenderTextBox(Vector2 size)
     {
-        ImGui.PushFont(_fontPtr);
-        
+        if (_childId == string.Empty)
+            _childId = $"##TextBox_{_textBox.Id}";
+        if (_windowId == string.Empty)
+            _windowId = $"##TextBoxWindow_{_textBox.Id}";
+
         ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, new Vector2(0, 0));
         ImGui.PushStyleVar(ImGuiStyleVar.ChildBorderSize, new Vector2(0, 0));
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
@@ -133,11 +102,11 @@ public class ImGuiTextBox
         ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(0, 0));
         
         ImGui.PushStyleColor(ImGuiCol.ChildBg, _textBox.Theme.Background.ToVector());
-        ImGui.BeginChild("##TextBox", size, true, ImGuiWindowFlags.HorizontalScrollbar);
+        ImGui.BeginChild(_childId, size, true, ImGuiWindowFlags.HorizontalScrollbar);
         Vector2 contentSize = ImGui.GetWindowContentRegionMax();
 
         ImGui.SetNextWindowSize(new Vector2(contentSize.X, contentSize.Y));
-        ImGui.Begin("##TextBoxWindow",
+        ImGui.Begin(_windowId,
             ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove |
             ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs |
             ImGuiWindowFlags.ChildWindow);
@@ -151,7 +120,5 @@ public class ImGuiTextBox
         ImGui.EndChild();
         ImGui.PopStyleColor();
         ImGui.PopStyleVar(5);
-            
-        ImGui.PopFont();
     }
 }
