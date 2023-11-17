@@ -44,13 +44,14 @@ public partial class TextBox
                 break;
 
             Row row = RowManager.Rows[i];
+            if (null == row.LineSub)
+                continue;
 
-            var lineY = i * FontManager.GetLineHeight();
-            var lineTextStartY = lineY + (int)FontManager.GetLineHeightOffset();
-            var lineEndY = lineY + FontManager.GetLineHeight();
-            var lineTextEndY = lineY + FontManager.GetLineHeight() - (int)FontManager.GetLineHeightOffset();
+            float lineY = i * FontManager.GetLineHeight();
+            float lineTextStartY = lineY + (int)FontManager.GetLineHeightOffset();
+            float lineTextEndY = lineY + FontManager.GetLineHeight() - (int)FontManager.GetLineHeightOffset();
 
-            var lineStartX = LineNumberWidth + FoldWidth + row.LineSub!.IndentWidth;
+            float lineStartX = LineNumberWidth + FoldWidth + row.LineSub.IndentWidth;
 
             if (row.RowSelection.Selected)
             {
@@ -111,44 +112,13 @@ public partial class TextBox
                         DrawImeComposition(lineStartX, lineTextStartY, lineTextEndY, ref currPosX);
                 }
 
-                if (row.LineSub.Coordinates.LineSubIndex == 0)
-                {
-                    string lineIndex = StringPool<int>.Get(line.Index + 1);
-
-                    float lineIndexWidth = 0.0f;
-                    foreach (char lineChar in lineIndex)
-                    {
-                        lineIndexWidth += FontManager.GetFontWidth(lineChar);
-                    }
-
-                    var lineIndexColor = CaretManager.IsLineHasCaret(line.Index)
-                        ? Theme.Foreground
-                        : Theme.ForegroundDimmed;
-
-                    Backend.RenderText(new Vector2(LineNumberWidth - lineIndexWidth, lineTextStartY),
-                        lineIndex,
-                        lineIndexColor.ToVector());
-                }
-
                 if (SyntaxFolding && Folding.None != line.Folding && row.LineSub.Coordinates.LineSubIndex == 0)
                 {
                     if (line.Folding.Folded)
                     {
                         Backend.RenderIcon(
-                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
-                            GuiIcon.Fold,
-                            Theme.Foreground.ToVector());
-
-                        Backend.RenderIcon(
                             new Vector2(lineStartX + currPosX + FontManager.GetFontWhiteSpaceWidth(), lineY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Ellipsis,
-                            Theme.Foreground.ToVector());
-                    }
-                    else
-                    {
-                        Backend.RenderIcon(
-                            new Vector2(LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
-                            GuiIcon.Unfold,
                             Theme.Foreground.ToVector());
                     }
                 }
@@ -208,6 +178,64 @@ public partial class TextBox
                             new Vector2(lineStartX + caretX - 1.0f, lineTextEndY),
                             Theme.Foreground.ToVector(),
                             2.0f);
+                    }
+                }
+            }
+        }
+
+        Backend.RenderRectangle(new Vector2(_viewPos.X, _viewPos.Y),
+            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth, _viewPos.Y + _viewSize.Y),
+            ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector());
+
+        for (int i = rowStart; i <= rowEnd; i++)
+        {
+            if (RowManager.Rows.Count <= i || i < 0)
+                break;
+
+            Row row = RowManager.Rows[i];
+            if (null == row.LineSub)
+                continue;
+
+            if (LineManager.GetLine(row.LineSub.Coordinates.LineIndex, out Line line))
+            {
+                float lineY = i * FontManager.GetLineHeight();
+                float lineTextStartY = lineY + (int)FontManager.GetLineHeightOffset();
+                float lineTextEndY = lineY + FontManager.GetLineHeight() - (int)FontManager.GetLineHeightOffset();
+
+                if (row.LineSub.Coordinates.LineSubIndex == 0)
+                {
+                    string lineIndex = StringPool<int>.Get(line.Index + 1);
+
+                    float lineIndexWidth = 0.0f;
+                    foreach (char lineChar in lineIndex)
+                    {
+                        lineIndexWidth += FontManager.GetFontWidth(lineChar);
+                    }
+
+                    var lineIndexColor = CaretManager.IsLineHasCaret(line.Index)
+                        ? Theme.Foreground
+                        : Theme.ForegroundDimmed;
+
+                    Backend.RenderText(new Vector2(_viewPos.X + LineNumberWidth - lineIndexWidth, lineTextStartY),
+                        lineIndex,
+                        lineIndexColor.ToVector());
+                }
+
+                if (SyntaxFolding && Folding.None != line.Folding && row.LineSub.Coordinates.LineSubIndex == 0)
+                {
+                    if (line.Folding.Folded)
+                    {
+                        Backend.RenderIcon(
+                            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            GuiIcon.Fold,
+                            Theme.Foreground.ToVector());
+                    }
+                    else
+                    {
+                        Backend.RenderIcon(
+                            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            GuiIcon.Unfold,
+                            Theme.Foreground.ToVector());
                     }
                 }
             }

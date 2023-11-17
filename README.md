@@ -56,8 +56,8 @@ It allows the use of a desired rendering backend, and the directly supported bac
 - SQL
 
 ## Backends
-||BellColorTextBox.ImGuiNet (C#)|BellColorTextBox.WinForm (C#)|BellColorTextBox.WPF (C#)|BellColorTextBox.ImGui (C++)|
-|---|---|---|---|---|
-|Windows|O|To Do|To Do|To Do|
-|Linux|To Do|X|X|To Do|
-|MacOS|To Do|X|X|To Do|
+||BellColorTextBox.ImGuiNet (C#)|BellColorTextBox.WinForm (C#)|BellColorTextBox.ImGui (C++)|
+|---|---|---|---|
+|Windows|O|To Do|To Do|
+|Linux|To Do|X|To Do|
+|MacOS|To Do|X|To Do|

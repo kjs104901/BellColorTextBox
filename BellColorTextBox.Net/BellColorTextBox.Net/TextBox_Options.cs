@@ -40,6 +40,9 @@ public partial class TextBox
         get => _wrapMode;
         set
         {
+            if (_wrapMode == value)
+                return;
+
             _wrapMode = value;
             foreach (Line line in LineManager.Lines)
             {
@@ -56,6 +59,9 @@ public partial class TextBox
         get => _wordWrapIndent;
         set
         {
+            if (_wordWrapIndent == value)
+                return;
+
             _wordWrapIndent = value;
             foreach (Line line in LineManager.Lines)
             {
@@ -79,6 +85,9 @@ public partial class TextBox
         get => _tabMode;
         set
         {
+            if (_tabMode == value)
+                return;
+
             _tabMode = value;
             _tabStringCache.SetDirty();
         }
@@ -90,6 +99,9 @@ public partial class TextBox
         get => _tabSize;
         set
         {
+            if (_tabSize == value)
+                return;
+
             _tabSize = value;
             _tabStringCache.SetDirty();
         }
@@ -101,6 +113,9 @@ public partial class TextBox
         get => _language;
         set
         {
+            if (_language == value)
+                return;
+
             _language = value;
             LineManager.SetLanguageTokenDirty();
         }

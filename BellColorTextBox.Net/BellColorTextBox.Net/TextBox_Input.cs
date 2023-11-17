@@ -477,8 +477,9 @@ public partial class TextBox
         isLineNumber = false;
         isFold = false;
 
-        float x = viewCoordinates.X - LineNumberWidth - FoldWidth;
-        if (x < -FoldWidth)
+        float pageX = viewCoordinates.X - LineNumberWidth - FoldWidth;
+        float screenX = pageX - _viewPos.X;
+        if (screenX < -FoldWidth)
         {
             isLineNumber = true;
             return;
@@ -494,7 +495,7 @@ public partial class TextBox
             {
                 coordinates.LineIndex = line.Index;
 
-                if (x < -FontManager.GetFontWhiteSpaceWidth())
+                if (screenX < -FontManager.GetFontWhiteSpaceWidth())
                 {
                     if (SyntaxFolding && Folding.None != line.Folding && row.LineSub.Coordinates.LineSubIndex == 0)
                     {
@@ -505,7 +506,7 @@ public partial class TextBox
 
                 coordinates.CharIndex =
                     row.LineSub.Coordinates.CharIndex +
-                    row.LineSub.GetCharIndex(x - row.LineSub.IndentWidth);
+                    row.LineSub.GetCharIndex(pageX - row.LineSub.IndentWidth);
 
                 coordinates.LineSubIndex = row.LineSub.Coordinates.LineSubIndex;
             }
