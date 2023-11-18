@@ -21,9 +21,10 @@ public partial class Language
         language.AddString("\"");
         language.AddString("\"\"\"\"");
 
-        language.AddMultilineString("@\"", "\"");
-        language.AddMultilineString("$@\"", "\"");
-        language.AddMultilineString("@$\"", "\"");
+        // TODO fix this
+        //language.AddMultilineString("@\"", "\"");
+        //language.AddMultilineString("$@\"", "\"");
+        //language.AddMultilineString("@$\"", "\"");
 
         // Number
         language.AddPattern(@"(\b0x[0-9a-fA-F]+\b|\b0b[01]+\b|\b0[0-7]+\b|\b\d+(\.\d+)?([eE][-+]?\d+)?[lLdDfF]?\b)",
