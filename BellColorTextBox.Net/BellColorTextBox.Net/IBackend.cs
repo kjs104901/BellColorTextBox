@@ -7,7 +7,8 @@ public enum GuiIcon
 {
     Fold,
     Unfold,
-    Ellipsis
+    Ellipsis,
+    Tab
 }
 
 public interface IBackend
@@ -18,7 +19,7 @@ public interface IBackend
     
     public void RenderPage(Vector2 size, Vector4 color);
     public void RenderText(Vector2 pos, string text, Vector4 color);
-    public void RenderIcon(Vector2 pos, GuiIcon icon, Vector4 color);
+    public void RenderIcon(Vector2 pos, GuiIcon icon, Vector4 color, float ratio = 1.0f);
     public void RenderLine(Vector2 start, Vector2 end, Vector4 color, float thickness);
     public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color);
 

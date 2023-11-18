@@ -76,7 +76,9 @@ public partial class TextBox
     public bool SyntaxHighlight { get; set; } = true;
     public bool SyntaxFolding { get; set; } = true;
     
-    public bool ShowingWhitespace { get; set; } = true;
+    public bool ShowingSpace { get; set; } = true;
+    public bool ShowingTab { get; set; } = true;
+    
     public float LeadingHeight { get; set; } = 1.2f;
     
     private TabMode _tabMode = TabMode.Tab;
@@ -131,7 +133,7 @@ public partial class TextBox
     internal string TabString => _tabStringCache.Get();
     private readonly Cache<string> _tabStringCache;
     
-    internal const int SyntaxGiveUpThreshold = 1000;
+    internal const int SyntaxGiveUpThreshold = 3000;
 
     internal int CountTabStart(string line)
     {

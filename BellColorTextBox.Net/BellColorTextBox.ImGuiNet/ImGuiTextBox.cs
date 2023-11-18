@@ -18,7 +18,8 @@ public class ImGuiTextBox
     public EolMode EolMode { get => _textBox.EolMode; set => _textBox.EolMode = value; }
     public bool SyntaxHighlight { get => _textBox.SyntaxHighlight; set => _textBox.SyntaxHighlight = value; }
     public bool SyntaxFolding { get => _textBox.SyntaxFolding; set => _textBox.SyntaxFolding = value; }
-    public bool ShowingWhitespace { get => _textBox.ShowingWhitespace; set => _textBox.ShowingWhitespace = value; }
+    public bool ShowingSpace { get => _textBox.ShowingSpace; set => _textBox.ShowingSpace = value; }
+    public bool ShowingTab { get => _textBox.ShowingTab; set => _textBox.ShowingTab = value; }
     public float LeadingHeight { get => _textBox.LeadingHeight; set => _textBox.LeadingHeight = value; }
     public TabMode TabMode { get => _textBox.TabMode; set => _textBox.TabMode = value; }
     public int TabSize { get => _textBox.TabSize; set => _textBox.TabSize = value; }

@@ -115,6 +115,11 @@ internal class Line
         _stringCache.SetDirty();
     }
 
+    internal void SetColorsDirty()
+    {
+        _colorsCache.SetDirty();
+    }
+
     internal void SetCutoffsDirty()
     {
         _cutoffsCache.SetDirty();
@@ -204,7 +209,7 @@ internal class Line
                 if (Singleton.TextBox.WrapMode == WrapMode.BreakWord)
                 {
                     cutoffs.Add(i);
-                    widthAccumulated = 0;
+                    widthAccumulated = GetIndentWidth();
                 }
                 else if (Singleton.TextBox.WrapMode == WrapMode.Word)
                 {
@@ -223,7 +228,7 @@ internal class Line
                     }
 
                     cutoffs.Add(i);
-                    widthAccumulated = 0;
+                    widthAccumulated = GetIndentWidth();
                 }
             }
         }

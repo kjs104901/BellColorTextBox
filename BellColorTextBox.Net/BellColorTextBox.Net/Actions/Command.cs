@@ -296,7 +296,7 @@ internal class IndentSelectionCommand : Command
                 {
                     line.RemoveChars(0, tabChars.Length);
                     RowManager.SetRowCacheDirty();
-                    CaretManager.ShiftCaretChar(line.Index, tabChars.Length, EditDirection.Backward, tabChars.Length);
+                    CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Backward, tabChars.Length);
                 }
                 else
                 {
@@ -329,7 +329,7 @@ internal class UnindentSelectionCommand : Command
             {
                 line.RemoveChars(0, tabChars.Length);
                 RowManager.SetRowCacheDirty();
-                CaretManager.ShiftCaretChar(line.Index, tabChars.Length, EditDirection.Backward, tabChars.Length);
+                CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Backward, tabChars.Length);
                 
                 _unindentLineIndexList.Add(line.Index);
             }

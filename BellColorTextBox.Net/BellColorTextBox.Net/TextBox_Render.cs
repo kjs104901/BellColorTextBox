@@ -47,16 +47,16 @@ public partial class TextBox
             if (null == row.LineSub)
                 continue;
 
-            float lineY = i * FontManager.GetLineHeight();
-            float lineTextStartY = lineY + (int)FontManager.GetLineHeightOffset();
-            float lineTextEndY = lineY + FontManager.GetLineHeight() - (int)FontManager.GetLineHeightOffset();
+            float rowStartY = i * FontManager.GetLineHeight();
+            float rowTextStartY = rowStartY + (int)FontManager.GetLineHeightOffset();
+            float rowTextEndY = rowStartY + FontManager.GetLineHeight() - (int)FontManager.GetLineHeightOffset();
 
-            float lineStartX = LineNumberWidth + FoldWidth + row.LineSub.IndentWidth;
+            float rowStartX = LineNumberWidth + FoldWidth + row.LineSub.IndentWidth;
 
             if (row.RowSelection.Selected)
             {
-                Backend.RenderRectangle(new Vector2(lineStartX + row.RowSelection.SelectionStart, lineTextStartY),
-                    new Vector2(lineStartX + row.RowSelection.SelectionEnd, lineTextEndY),
+                Backend.RenderRectangle(new Vector2(rowStartX + row.RowSelection.SelectionStart, rowTextStartY),
+                    new Vector2(rowStartX + row.RowSelection.SelectionEnd, rowTextEndY),
                     Theme.BackgroundSelection.ToVector());
             }
 
@@ -75,31 +75,26 @@ public partial class TextBox
                     foreach (Coordinates caretPosition in row.RowSelection.CaretPositions)
                     {
                         if (rowCharIndex == caretPosition.CharIndex)
-                            DrawImeComposition(lineStartX, lineTextStartY, lineTextEndY, ref currPosX);
+                            DrawImeComposition(rowStartX, rowTextStartY, rowTextEndY, ref currPosX);
                     }
 
-                    Backend.RenderText(new Vector2(lineStartX + currPosX, lineTextStartY),
+                    Backend.RenderText(new Vector2(rowStartX + currPosX, rowTextStartY),
                         StringPool<char>.Get(rowChar), charColor.ToVector());
 
-                    if (ShowingWhitespace)
+                    if (ShowingSpace && rowChar == ' ')
                     {
-                        if (rowChar == ' ')
-                        {
-                            Backend.RenderText(
-                                new Vector2(lineStartX + currPosX, lineTextStartY),
-                                "·", Theme.ForegroundDimmed.ToVector());
-                        }
-                        else if (rowChar == '\t')
-                        {
-                            Backend.RenderLine(
-                                new Vector2(
-                                    lineStartX + currPosX,
-                                    lineY + FontManager.GetLineHeight() / 2.0f),
-                                new Vector2(
-                                    lineStartX + currPosX + rowCharWidth - FontManager.GetFontWhiteSpaceWidth(),
-                                    lineY + FontManager.GetLineHeight() / 2.0f),
-                                Theme.ForegroundDimmed.ToVector(), 1.0f);
-                        }
+                        Backend.RenderText(
+                            new Vector2(rowStartX + currPosX, rowTextStartY),
+                            "·", Theme.ForegroundDimmed.ToVector());
+                    }
+                    if (ShowingTab && rowChar == '\t')
+                    {
+                        Backend.RenderIcon(
+                            new Vector2(
+                                rowStartX + currPosX + FontManager.GetFontWhiteSpaceWidth(),
+                                rowStartY + (FontManager.GetLineHeight() / 2.0f)),
+                            GuiIcon.Tab,
+                            Theme.ForegroundDimmed.ToVector(), 0.7f);
                     }
 
                     currPosX += rowCharWidth;
@@ -109,7 +104,7 @@ public partial class TextBox
                 foreach (Coordinates caretPosition in row.RowSelection.CaretPositions)
                 {
                     if (row.LineSub.Chars.Count == caretPosition.CharIndex)
-                        DrawImeComposition(lineStartX, lineTextStartY, lineTextEndY, ref currPosX);
+                        DrawImeComposition(rowStartX, rowTextStartY, rowTextEndY, ref currPosX);
                 }
 
                 if (SyntaxFolding && Folding.None != line.Folding && row.LineSub.Coordinates.LineSubIndex == 0)
@@ -117,32 +112,12 @@ public partial class TextBox
                     if (line.Folding.Folded)
                     {
                         Backend.RenderIcon(
-                            new Vector2(lineStartX + currPosX + FontManager.GetFontWhiteSpaceWidth(), lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            new Vector2(rowStartX + currPosX + FontManager.GetFontWhiteSpaceWidth(), rowStartY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Ellipsis,
                             Theme.Foreground.ToVector());
                     }
                 }
             }
-
-            // TODO: Need auto scroll
-            /*
-            if (CaretManager.Count == 1 &&
-                CaretManager.GetFirstCaret(out var firstCaret) &&
-                firstCaret.Position.LineIndex == line.Index &&
-                LineManager.GetLineSub(firstCaret.Position, out LineSub scrollLineSub))
-            {
-                float startPosition = scrollLineSub.GetCharPosition(firstCaret.Position) - _viewPos.X;
-                
-                if (startPosition < 0.0f)
-                {
-                    Backend.SetScrollX(startPosition);
-                }
-                else if (startPosition > _viewSize.X)
-                {
-                    Backend.SetScrollX(startPosition - _viewSize.X);
-                }
-            }
-            */
 
             if (CaretBlinkStopwatch.ElapsedMilliseconds < 1000 ||
                 CaretBlinkStopwatch.ElapsedMilliseconds % 1000 < 500)
@@ -165,17 +140,17 @@ public partial class TextBox
                     if (Overwrite)
                     {
                         Backend.RenderRectangle(
-                            new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
-                            new Vector2(lineStartX + caretX - 1.0f + FontManager.GetFontWidth(currString), lineTextEndY),
+                            new Vector2(rowStartX + caretX - 1.0f, rowTextStartY),
+                            new Vector2(rowStartX + caretX - 1.0f + FontManager.GetFontWidth(currString), rowTextEndY),
                             Theme.Foreground.ToVector());
-                        Backend.RenderText(new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
+                        Backend.RenderText(new Vector2(rowStartX + caretX - 1.0f, rowTextStartY),
                             currString, Theme.Background.ToVector());
                     }
                     else
                     {
                         Backend.RenderLine(
-                            new Vector2(lineStartX + caretX - 1.0f, lineTextStartY),
-                            new Vector2(lineStartX + caretX - 1.0f, lineTextEndY),
+                            new Vector2(rowStartX + caretX - 1.0f, rowTextStartY),
+                            new Vector2(rowStartX + caretX - 1.0f, rowTextEndY),
                             Theme.Foreground.ToVector(),
                             2.0f);
                     }
@@ -183,8 +158,34 @@ public partial class TextBox
             }
         }
 
+        
+        // TODO: find a better way to scroll to caret
+        //if (CaretManager.Count == 1 &&  CaretManager.GetFirstCaret(out var firstCaret) &&
+        //    LineManager.GetLineSub(firstCaret.Position, out LineSub scrollLineSub))
+        //{
+        //    float scrollX = LineNumberWidth + FoldWidth + scrollLineSub.GetCharPosition(firstCaret.Position);
+        //    if (scrollX < _viewPos.X + LineNumberWidth + FoldWidth)
+        //    {
+        //        Backend.SetScrollX(scrollX - LineNumberWidth - FoldWidth - FontManager.GetFontWhiteSpaceWidth());
+        //    }
+        //    else if (scrollX > _viewPos.X + _viewSize.X)
+        //    {
+        //        Backend.SetScrollX(scrollX - _viewSize.X + FontManager.GetFontWhiteSpaceWidth());
+        //    }
+        //
+        //    float scrollY = i * FontManager.GetLineHeight();
+        //    if (scrollY < _viewPos.Y)
+        //    {
+        //        Backend.SetScrollY(scrollY - FontManager.GetLineHeight());
+        //    }
+        //    else if (scrollY > _viewPos.Y + _viewSize.Y - FontManager.GetLineHeight() * 2)
+        //    {
+        //        Backend.SetScrollY(scrollY - _viewSize.Y + FontManager.GetLineHeight() * 2);
+        //    }
+        //}
+        
         Backend.RenderRectangle(new Vector2(_viewPos.X, _viewPos.Y),
-            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth, _viewPos.Y + _viewSize.Y),
+            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth - 2.0f, _viewPos.Y + _viewSize.Y),
             ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector());
 
         for (int i = rowStart; i <= rowEnd; i++)

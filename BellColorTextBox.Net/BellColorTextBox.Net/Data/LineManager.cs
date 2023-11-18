@@ -255,6 +255,8 @@ internal partial class LineManager
             {
                 tokens.Pop();
             }
+
+            line.SetColorsDirty();
         }
 
         // Adding remaining foldings

@@ -124,7 +124,7 @@ public class ImGuiBackend : IBackend
             ImGui.ColorConvertFloat4ToU32(color), text);
     }
 
-    public void RenderIcon(Vector2 pos, GuiIcon icon, Vector4 color)
+    public void RenderIcon(Vector2 pos, GuiIcon icon, Vector4 color, float ratio = 1.0f)
     {
         char iconChar = ' ';
         string iconString = string.Empty; // To avoid garbage collection
@@ -142,12 +142,16 @@ public class ImGuiBackend : IBackend
                 iconChar = '\uf141'; //ellipsis
                 iconString = "\uf141";
                 break;
+            case GuiIcon.Tab:
+                iconChar = '\uf178'; //arrow-right-long
+                iconString = "\uf178";
+                break;
         }
         
         float fontSize = ImGui.GetFont().FontSize;
 
-        float iconSize = fontSize * 3.0f / 4.0f;
-        float iconWidth = ImGuiTextBox.FontAwesome.GetCharAdvance(iconChar);
+        float iconSize = fontSize * 3.0f / 4.0f * ratio;
+        float iconWidth = ImGuiTextBox.FontAwesome.GetCharAdvance(iconChar) * ratio;
 
         float posX = _drawPosOnPage.X + pos.X - (iconWidth / 2.0f);
         float posY = _drawPosOnPage.Y + pos.Y - (iconSize / 2.0f);

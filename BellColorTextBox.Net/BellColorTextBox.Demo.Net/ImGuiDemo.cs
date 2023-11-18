@@ -33,7 +33,9 @@ class ImGuiDemo
     
     private static bool _syntaxHighlight = true;
     private static bool _syntaxFolding = true;
-    private static bool _showingWhitespace = true;
+    
+    private static bool _showingSpace = true;
+    private static bool _showingTab = true;
 
     private static float _leadingHeight = 1.2f;
     
@@ -158,8 +160,10 @@ class ImGuiDemo
                     imGuiBellTextBox.SyntaxHighlight = _syntaxHighlight;
                 if (ImGui.Checkbox("SyntaxFolding", ref _syntaxFolding))
                     imGuiBellTextBox.SyntaxFolding = _syntaxFolding;
-                if (ImGui.Checkbox("ShowingWhitespace", ref _showingWhitespace))
-                    imGuiBellTextBox.ShowingWhitespace = _showingWhitespace;
+                if (ImGui.Checkbox("ShowingSpace", ref _showingSpace))
+                    imGuiBellTextBox.ShowingSpace = _showingSpace;
+                if (ImGui.Checkbox("ShowingTab", ref _showingTab))
+                    imGuiBellTextBox.ShowingTab = _showingTab;
                 
                 if (ImGui.InputFloat("LeadingHeight", ref _leadingHeight, 0.01f, 0.05f, "%.2f"))
                     imGuiBellTextBox.LeadingHeight = _leadingHeight;
