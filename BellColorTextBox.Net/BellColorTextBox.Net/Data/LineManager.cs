@@ -273,6 +273,7 @@ internal partial class LineManager
         }
 
         RestoreFolded_();
+        RowManager.SetRowCacheDirty();
         return tokens;
     }
 
