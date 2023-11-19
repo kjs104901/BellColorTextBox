@@ -16,7 +16,7 @@ public class Font
     {
         if (false == _sizeWidthCache.TryGetValue(c, out float fontWidth))
         {
-            fontWidth = Singleton.TextBox.Backend.GetCharWidth(c);
+            fontWidth = TextBox.Ins.Backend.GetCharWidth(c);
             _sizeWidthCache[c] = fontWidth;
         }
         return fontWidth;

@@ -329,7 +329,7 @@ internal struct Coordinates
 
         if (CaretMove.PageUp == caretMove)
         {
-            int newLineIndex = LineIndex - Singleton.TextBox.LinesPerPage / 2;
+            int newLineIndex = LineIndex - TextBox.Ins.LinesPerPage / 2;
             if (newLineIndex < 0)
                 newLineIndex = 0;
             
@@ -343,7 +343,7 @@ internal struct Coordinates
 
         if (CaretMove.PageDown == caretMove)
         {
-            int newLineIndex = LineIndex + Singleton.TextBox.LinesPerPage / 2;
+            int newLineIndex = LineIndex + TextBox.Ins.LinesPerPage / 2;
             if (newLineIndex >= LineManager.Lines.Count)
                 newLineIndex = LineManager.Lines.Count - 1;
             

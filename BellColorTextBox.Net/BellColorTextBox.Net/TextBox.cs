@@ -26,6 +26,13 @@ public partial class TextBox
     public int Id;
     private static int _idCounter = 0;
 
+    private static readonly ThreadLocal<TextBox> ThreadLocalTextBox = new();
+    internal static TextBox Ins
+    {
+        get => ThreadLocalTextBox.Value ?? throw new Exception("No TextBox set");
+        set => ThreadLocalTextBox.Value = value;
+    }
+    
     public TextBox(IBackend backend)
     {
         Id = Interlocked.Increment(ref _idCounter);
@@ -39,13 +46,13 @@ public partial class TextBox
     {
         get
         {
-            Singleton.TextBox = this;
+            Ins = this;
         
             _sb.Clear();
             foreach (Line line in LineManager.Lines)
             {
                 _sb.Append(line.String);
-                _sb.Append(Singleton.TextBox.GetEolString());
+                _sb.Append(TextBox.Ins.GetEolString());
             }
             return _sb.ToString();
         }
@@ -53,10 +60,10 @@ public partial class TextBox
         {
             string text = value;
             
-            Singleton.TextBox = this;
+            Ins = this;
         
-            text = Singleton.TextBox.ReplaceTab(text);
-            text = Singleton.TextBox.ReplaceEol(text);
+            text = Ins.ReplaceTab(text);
+            text = Ins.ReplaceEol(text);
 
             LineManager.Lines.Clear();
             int i = 0;
@@ -75,7 +82,7 @@ public partial class TextBox
 
     public string GetDebugString()
     {
-        Singleton.TextBox = this;
+        Ins = this;
         
         var sb = new StringBuilder();
         sb.AppendLine(CaretManager.GetDebugString());

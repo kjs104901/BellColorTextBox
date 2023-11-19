@@ -40,16 +40,16 @@ internal class Cache<T>
                 Update();
         }
         
-        if (Singleton.TextBox.IsDebugMode)
-            Singleton.TextBox.CacheCounter.CountGet(_name);
+        if (TextBox.Ins.IsDebugMode)
+            TextBox.Ins.CacheCounter.CountGet(_name);
         
         return _value;
     }
 
     internal void SetDirty()
     {
-        if (Singleton.TextBox.IsDebugMode)
-            Singleton.TextBox.CacheCounter.CountSetDirty(_name);
+        if (TextBox.Ins.IsDebugMode)
+            TextBox.Ins.CacheCounter.CountSetDirty(_name);
         
         _isDirty = true;
 
@@ -59,19 +59,19 @@ internal class Cache<T>
 
     private void Update()
     {
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            Singleton.TextBox.CacheCounter.CountUpdate(_name);
+            TextBox.Ins.CacheCounter.CountUpdate(_name);
             UpdateStopwatch.Restart();
         }
         
         _value = _updateFunc(_value);
         _isDirty = false;
         
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
             UpdateStopwatch.Stop();
-            Singleton.TextBox.CacheCounter.AddUpdateTime(_name, UpdateStopwatch.ElapsedMilliseconds);
+            TextBox.Ins.CacheCounter.AddUpdateTime(_name, UpdateStopwatch.ElapsedMilliseconds);
         }
     }
 }

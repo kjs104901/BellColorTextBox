@@ -5,10 +5,10 @@ namespace Bell.Data;
 // Interface
 internal partial class RowManager
 {
-    internal static List<Row> Rows => Singleton.TextBox.RowManager._rowsCache.Get();
-    internal static void SetRowCacheDirty() => Singleton.TextBox.RowManager.SetRowCacheDirty_();
-    internal static void SetRowSelectionDirty() => Singleton.TextBox.RowManager.SetRowSelectionDirty_();
-    internal static void CheckSelectionUpdate() => Singleton.TextBox.RowManager.CheckSelectionUpdate_();
+    internal static List<Row> Rows => TextBox.Ins.RowManager._rowsCache.Get();
+    internal static void SetRowCacheDirty() => TextBox.Ins.RowManager.SetRowCacheDirty_();
+    internal static void SetRowSelectionDirty() => TextBox.Ins.RowManager.SetRowSelectionDirty_();
+    internal static void CheckSelectionUpdate() => TextBox.Ins.RowManager.CheckSelectionUpdate_();
 }
 
 // Implementation
@@ -27,7 +27,7 @@ internal partial class RowManager
 
     private List<Row> UpdateRows(List<Row> rows)
     {
-        Singleton.TextBox.RowPool.Return(rows);
+        TextBox.Ins.RowPool.Return(rows);
         rows.Clear();
 
         int foldingCount = 0;
@@ -63,7 +63,7 @@ internal partial class RowManager
             {
                 for (int i = 0; i < line.LineSubs.Count; i++)
                 {
-                    Row row = Singleton.TextBox.RowPool.Get();
+                    Row row = TextBox.Ins.RowPool.Get();
                     row.LineIndex = line.Index;
                     row.LineSubIndex = i;
                     rows.Add(row);

@@ -5,15 +5,15 @@ namespace Bell.Data;
 // Interface
 internal partial class FontManager
 {
-    internal static void UpdateReferenceSize() => Singleton.TextBox.FontManager.UpdateReferenceSize_();
-    internal static float GetFontReferenceWidth() => Singleton.TextBox.FontManager.GetFontReferenceWidth_();
-    internal static float GetFontWhiteSpaceWidth() => Singleton.TextBox.FontManager.GetFontWhiteSpaceWidth_();
-    internal static float GetFontTabWidth() => Singleton.TextBox.FontManager.GetFontTabWidth_();
-    internal static float GetFontNumberWidth() => Singleton.TextBox.FontManager.GetFontNumberWidth_();
-    internal static float GetFontWidth(char c) => Singleton.TextBox.FontManager.GetFontWidth_(c);
-    internal static float GetFontWidth(string str) => Singleton.TextBox.FontManager.GetFontWidth_(str);
-    internal static float GetLineHeight() => Singleton.TextBox.FontManager.GetLineHeight_();
-    internal static float GetLineHeightOffset() => Singleton.TextBox.FontManager.GetLineHeightOffset_();
+    internal static void UpdateReferenceSize() => TextBox.Ins.FontManager.UpdateReferenceSize_();
+    internal static float GetFontReferenceWidth() => TextBox.Ins.FontManager.GetFontReferenceWidth_();
+    internal static float GetFontWhiteSpaceWidth() => TextBox.Ins.FontManager.GetFontWhiteSpaceWidth_();
+    internal static float GetFontTabWidth() => TextBox.Ins.FontManager.GetFontTabWidth_();
+    internal static float GetFontNumberWidth() => TextBox.Ins.FontManager.GetFontNumberWidth_();
+    internal static float GetFontWidth(char c) => TextBox.Ins.FontManager.GetFontWidth_(c);
+    internal static float GetFontWidth(string str) => TextBox.Ins.FontManager.GetFontWidth_(str);
+    internal static float GetLineHeight() => TextBox.Ins.FontManager.GetLineHeight_();
+    internal static float GetLineHeightOffset() => TextBox.Ins.FontManager.GetLineHeightOffset_();
 }
 
 // Implementation
@@ -25,7 +25,7 @@ internal partial class FontManager
 
     private void UpdateReferenceSize_()
     {
-        var fontSize = Singleton.TextBox.Backend.GetFontSize();
+        var fontSize = TextBox.Ins.Backend.GetFontSize();
         if (false == _fontDictionary.ContainsKey(fontSize))
             _fontDictionary.TryAdd(fontSize, new Font(fontSize));
         _fontCache = _fontDictionary[fontSize];
@@ -33,13 +33,13 @@ internal partial class FontManager
 
     private float GetFontReferenceWidth_() => GetFontWidth('#');
     private float GetFontWhiteSpaceWidth_() => GetFontWidth(' ');
-    private float GetFontTabWidth_() => GetFontWidth(' ') * Singleton.TextBox.TabSize;
+    private float GetFontTabWidth_() => GetFontWidth(' ') * TextBox.Ins.TabSize;
     private float GetFontNumberWidth_() => GetFontWidth('0');
 
     private float GetFontWidth_(char c)
     {
         if (c == '\t')
-            return GetFontWhiteSpaceWidth() * Singleton.TextBox.TabSize;
+            return GetFontWhiteSpaceWidth() * TextBox.Ins.TabSize;
         
         return _fontCache.GetFontWidth(c);
     }
@@ -51,11 +51,11 @@ internal partial class FontManager
 
     private float GetLineHeight_()
     {
-        return _fontCache.Size * Singleton.TextBox.LeadingHeight;
+        return _fontCache.Size * TextBox.Ins.LeadingHeight;
     }
 
     private float GetLineHeightOffset_()
     {
-        return ((_fontCache.Size * Singleton.TextBox.LeadingHeight) - _fontCache.Size) / 2.0f;
+        return ((_fontCache.Size * TextBox.Ins.LeadingHeight) - _fontCache.Size) / 2.0f;
     }
 }

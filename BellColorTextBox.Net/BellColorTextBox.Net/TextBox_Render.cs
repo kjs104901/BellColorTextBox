@@ -18,7 +18,7 @@ public partial class TextBox
 
     public void Render(Vector2 viewPos, Vector2 viewSize)
     {
-        Singleton.TextBox = this;
+        Ins = this;
         ProcessInput(viewPos, viewSize);
 
         FontManager.UpdateReferenceSize();

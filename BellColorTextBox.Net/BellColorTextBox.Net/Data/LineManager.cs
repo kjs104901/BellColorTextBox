@@ -7,35 +7,35 @@ namespace Bell.Data;
 // Interface
 internal partial class LineManager
 {
-    internal static List<Line> Lines => Singleton.TextBox.LineManager._lines;
-    internal static List<Folding> FoldingList => Singleton.TextBox.LineManager._foldingList;
+    internal static List<Line> Lines => TextBox.Ins.LineManager._lines;
+    internal static List<Folding> FoldingList => TextBox.Ins.LineManager._foldingList;
 
     internal static bool GetLine(int lineIndex, out Line line) =>
-        Singleton.TextBox.LineManager.GetLine_(lineIndex, out line);
+        TextBox.Ins.LineManager.GetLine_(lineIndex, out line);
 
     internal static bool GetLineSub(int lineIndex, int lineSubIndex, out LineSub lineSub) =>
-        Singleton.TextBox.LineManager.GetLineSub_(lineIndex, lineSubIndex, out lineSub);
+        TextBox.Ins.LineManager.GetLineSub_(lineIndex, lineSubIndex, out lineSub);
 
     internal static bool GetLineSub(Coordinates coordinates, out LineSub lineSub) =>
-        Singleton.TextBox.LineManager.GetLineSub_(coordinates, out lineSub);
+        TextBox.Ins.LineManager.GetLineSub_(coordinates, out lineSub);
 
     internal static Line InsertLine(int lineIndex) =>
-        Singleton.TextBox.LineManager.InsertLine_(lineIndex);
+        TextBox.Ins.LineManager.InsertLine_(lineIndex);
 
     internal static void RemoveLine(int removeLineIndex) =>
-        Singleton.TextBox.LineManager.RemoveLine_(removeLineIndex);
+        TextBox.Ins.LineManager.RemoveLine_(removeLineIndex);
 
-    internal static void UpdateLanguageToken() => Singleton.TextBox.LineManager._languageTokenCache.Get();
-    internal static void SetLanguageTokenDirty() => Singleton.TextBox.LineManager._languageTokenCache.SetDirty();
+    internal static void UpdateLanguageToken() => TextBox.Ins.LineManager._languageTokenCache.Get();
+    internal static void SetLanguageTokenDirty() => TextBox.Ins.LineManager._languageTokenCache.SetDirty();
     
     internal static void ShiftFoldingLine(int lineIndex, EditDirection direction) =>
-        Singleton.TextBox.LineManager.ShiftFoldingLine_(lineIndex, direction);
+        TextBox.Ins.LineManager.ShiftFoldingLine_(lineIndex, direction);
     
     internal static void Unfold(int lineIndex) =>
-        Singleton.TextBox.LineManager.Unfold_(lineIndex);
+        TextBox.Ins.LineManager.Unfold_(lineIndex);
 
     internal static float GetMaxLineWidth() =>
-        Singleton.TextBox.LineManager.GetMaxLineWidth_();
+        TextBox.Ins.LineManager.GetMaxLineWidth_();
 }
 
 // Implementation
@@ -129,7 +129,7 @@ internal partial class LineManager
         SaveFolded_();
         _foldingList.Clear();
 
-        int foldingTypeCount = Singleton.TextBox.Language.Tokens[Language.TokenType.FoldingStart].Count;
+        int foldingTypeCount = TextBox.Ins.Language.Tokens[Language.TokenType.FoldingStart].Count;
         for (int i = 0; i < foldingTypeCount; i++)
         {
             if (_foldingStacks.ContainsKey(i) == false)

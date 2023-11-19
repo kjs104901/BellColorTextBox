@@ -89,7 +89,7 @@ internal class Line
 
         LineManager.Unfold(Index);
         
-        if (WrapMode.None != Singleton.TextBox.WrapMode)
+        if (WrapMode.None != TextBox.Ins.WrapMode)
             RowManager.SetRowCacheDirty();
         else
             RowManager.SetRowSelectionDirty();
@@ -111,7 +111,7 @@ internal class Line
 
         LineManager.Unfold(Index);
 
-        if (WrapMode.None != Singleton.TextBox.WrapMode)
+        if (WrapMode.None != TextBox.Ins.WrapMode)
             RowManager.SetRowCacheDirty();
         else
             RowManager.SetRowSelectionDirty();
@@ -139,7 +139,7 @@ internal class Line
     private List<ColorStyle> UpdateColors(List<ColorStyle> colors)
     {
         colors.Clear();
-        if (Singleton.TextBox.SyntaxHighlight == false ||
+        if (TextBox.Ins.SyntaxHighlight == false ||
             _chars.Count > TextBox.SyntaxGiveUpThreshold)
         {
             return colors;
@@ -150,10 +150,10 @@ internal class Line
             colors.Add(ColorStyle.None);
         }
 
-        foreach (var kv in Singleton.TextBox.Language.PatternsStyle)
+        foreach (var kv in TextBox.Ins.Language.PatternsStyle)
         {
             Regex regex = kv.Key;
-            ColorStyle colorStyle = Singleton.TextBox.Theme.TokenColors[kv.Value];
+            ColorStyle colorStyle = TextBox.Ins.Theme.TokenColors[kv.Value];
 
             foreach (Match match in regex.Matches(String))
             {
@@ -168,7 +168,7 @@ internal class Line
         {
             for (int i = range.Item1; i < range.Item2 && i < colors.Count; i++)
             {
-                colors[i] = Singleton.TextBox.Theme.TokenColors[Theme.Token.Comment];
+                colors[i] = TextBox.Ins.Theme.TokenColors[Theme.Token.Comment];
             }
         }
 
@@ -176,7 +176,7 @@ internal class Line
         {
             for (int i = CommentStart; i < colors.Count; i++)
             {
-                colors[i] = Singleton.TextBox.Theme.TokenColors[Theme.Token.Comment];
+                colors[i] = TextBox.Ins.Theme.TokenColors[Theme.Token.Comment];
             }
         }
 
@@ -184,7 +184,7 @@ internal class Line
         {
             for (int i = range.Item1; i < range.Item2 && i < colors.Count; i++)
             {
-                colors[i] = Singleton.TextBox.Theme.TokenColors[Theme.Token.String];
+                colors[i] = TextBox.Ins.Theme.TokenColors[Theme.Token.String];
             }
         }
 
@@ -192,7 +192,7 @@ internal class Line
         {
             for (int i = StringStart; i < colors.Count; i++)
             {
-                colors[i] = Singleton.TextBox.Theme.TokenColors[Theme.Token.String];
+                colors[i] = TextBox.Ins.Theme.TokenColors[Theme.Token.String];
             }
         }
         
@@ -202,10 +202,10 @@ internal class Line
     private HashSet<int> UpdateCutoff(HashSet<int> cutoffs)
     {
         cutoffs.Clear();
-        if (WrapMode.None == Singleton.TextBox.WrapMode)
+        if (WrapMode.None == TextBox.Ins.WrapMode)
             return cutoffs;
 
-        var lineWidth = Singleton.TextBox.PageSize.X - Singleton.TextBox.LineNumberWidth - Singleton.TextBox.FoldWidth;
+        var lineWidth = TextBox.Ins.PageSize.X - TextBox.Ins.LineNumberWidth - TextBox.Ins.FoldWidth;
         if (lineWidth < 1.0f)
             return cutoffs;
 
@@ -216,12 +216,12 @@ internal class Line
             widthAccumulated += FontManager.GetFontWidth(_chars[i]);
             if (widthAccumulated + FontManager.GetFontReferenceWidth() > lineWidth)
             {
-                if (Singleton.TextBox.WrapMode == WrapMode.BreakWord)
+                if (TextBox.Ins.WrapMode == WrapMode.BreakWord)
                 {
                     cutoffs.Add(i);
                     widthAccumulated = GetIndentWidth();
                 }
-                else if (Singleton.TextBox.WrapMode == WrapMode.Word)
+                else if (TextBox.Ins.WrapMode == WrapMode.Word)
                 {
                     // go back to the start of word
                     float backWidth = 0.0f;
@@ -255,12 +255,12 @@ internal class Line
 
     private List<LineSub> UpdateLineSubs(List<LineSub> lineSubs)
     {
-        Singleton.TextBox.LineSubPool.Return(lineSubs);
+        TextBox.Ins.LineSubPool.Return(lineSubs);
         lineSubs.Clear();
         Width = 0.0f;
 
         int lineSubIndex = 0;
-        LineSub lineSub = Singleton.TextBox.LineSubPool.Get();
+        LineSub lineSub = TextBox.Ins.LineSubPool.Get();
         lineSub.Coordinates = new Coordinates(Index, 0, lineSubIndex);
         lineSub.IndentWidth = 0.0f;
         lineSub.Width = 0.0f;
@@ -270,7 +270,7 @@ internal class Line
         {
             char c = _chars[i];
             float cWidth = FontManager.GetFontWidth(c);
-            if (c == '\t' && Singleton.TextBox.TabMode == TabMode.Tab)
+            if (c == '\t' && TextBox.Ins.TabMode == TabMode.Tab)
             {
                 float posX = ((int)((lineSub.IndentWidth + currentX + cWidth) / FontManager.GetFontTabWidth())) *
                              FontManager.GetFontTabWidth();
@@ -290,7 +290,7 @@ internal class Line
                 Width = Math.Max(Width, lineSub.Width);
 
                 lineSubIndex++;
-                lineSub = Singleton.TextBox.LineSubPool.Get();
+                lineSub = TextBox.Ins.LineSubPool.Get();
                 lineSub.Coordinates = new Coordinates(Index, i + 1, lineSubIndex);
                 lineSub.IndentWidth = GetIndentWidth();
                 lineSub.Width = GetIndentWidth();
@@ -308,7 +308,7 @@ internal class Line
 
         for (int i = 0; i < String.Length; i++)
         {
-            if (Singleton.TextBox.Language.FindMatching(String, i, out Language.Token matchedToken))
+            if (TextBox.Ins.Language.FindMatching(String, i, out Language.Token matchedToken))
             {
                 Tokens.Add(matchedToken);
                 i += matchedToken.TokenString.Length;
@@ -345,21 +345,21 @@ internal class Line
 
     private float GetIndentWidth()
     {
-        if (Singleton.TextBox.WordWrapIndent)
-            return Singleton.TextBox.CountTabStart(String) * FontManager.GetFontTabWidth();
+        if (TextBox.Ins.WordWrapIndent)
+            return TextBox.Ins.CountTabStart(String) * FontManager.GetFontTabWidth();
         return 0.0f;
     }
 
     internal ColorStyle GetColorStyle(int charIndex)
     {
-        ColorStyle charColor = Singleton.TextBox.Theme.Foreground;
-        if (false == Singleton.TextBox.SyntaxHighlight)
+        ColorStyle charColor = TextBox.Ins.Theme.Foreground;
+        if (false == TextBox.Ins.SyntaxHighlight)
             return charColor;
         
         if (Colors.Count > charIndex)
             charColor = Colors[charIndex];
         if (charColor == ColorStyle.None)
-            charColor = Singleton.TextBox.Theme.Foreground;
+            charColor = TextBox.Ins.Theme.Foreground;
         return charColor;
     }
 

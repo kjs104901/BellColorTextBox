@@ -11,7 +11,7 @@ internal class ActionManager
     
     internal void DoAction(Action action)
     {
-        if (Singleton.TextBox.ReadOnly)
+        if (TextBox.Ins.ReadOnly)
             return;
         
         action.DoCommands();

@@ -19,20 +19,20 @@ public class Logger
     [Conditional("DEBUG")]
     public static void Info(string message, [CallerMemberName] string callerMemberName = "")
     {
-        Singleton.TextBox.Logger.AddLog(Level.Info, callerMemberName, message);
+        TextBox.Ins.Logger.AddLog(Level.Info, callerMemberName, message);
     }
 
     [Conditional("DEBUG")]
     public static void Warning(string message, [CallerMemberName] string callerMemberName = "")
     {
-        Singleton.TextBox.Logger.AddLog(Level.Warning, callerMemberName, message);
+        TextBox.Ins.Logger.AddLog(Level.Warning, callerMemberName, message);
     }
 
     [Conditional("DEBUG")]
     public static void Error(string message, [CallerMemberName] string callerMemberName = "")
     {
-        Singleton.TextBox.Logger.AddLog(Level.Error, callerMemberName, message);
-        if (Singleton.TextBox.IsDebugMode)
+        TextBox.Ins.Logger.AddLog(Level.Error, callerMemberName, message);
+        if (TextBox.Ins.IsDebugMode)
         {
             Debugger.Break();
         }

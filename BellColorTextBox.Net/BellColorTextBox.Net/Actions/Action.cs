@@ -42,8 +42,8 @@ internal abstract class Action
 
     
         SaveCarets(_startCarets);
-        if (Singleton.TextBox.IsDebugMode)
-            _startText = Singleton.TextBox.Text;
+        if (TextBox.Ins.IsDebugMode)
+            _startText = TextBox.Ins.Text;
 
         for (int i = 0; i < CaretManager.Count; i++)
         {
@@ -60,9 +60,9 @@ internal abstract class Action
 
         SaveCarets(_endCarets);
 
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            _endText = Singleton.TextBox.Text;
+            _endText = TextBox.Ins.Text;
 
             bool isAllSame = true;
             for (int i = 0; i < _endCarets.Count; i++)
@@ -104,9 +104,9 @@ internal abstract class Action
             return;
         }
 
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            if (Singleton.TextBox.Text != _startText)
+            if (TextBox.Ins.Text != _startText)
                 Logger.Error("RedoCommands: Text not match");
         }
 
@@ -124,9 +124,9 @@ internal abstract class Action
 
         RestoreCarets(_endCarets);
 
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            if (Singleton.TextBox.Text != _endText)
+            if (TextBox.Ins.Text != _endText)
                 Logger.Error("RedoCommands: Text not match");
         }
     }
@@ -139,9 +139,9 @@ internal abstract class Action
             return;
         }
 
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            if (Singleton.TextBox.Text != _endText)
+            if (TextBox.Ins.Text != _endText)
                 Logger.Error("UndoCommands: Text not match");
         }
 
@@ -160,9 +160,9 @@ internal abstract class Action
 
         RestoreCarets(_startCarets);
 
-        if (Singleton.TextBox.IsDebugMode)
+        if (TextBox.Ins.IsDebugMode)
         {
-            if (Singleton.TextBox.Text != _startText)
+            if (TextBox.Ins.Text != _startText)
                 Logger.Error("UndoCommands: Text not match");
         }
     }
@@ -341,7 +341,7 @@ internal class InputCharAction : Action
     protected override List<Command> CreateCommands(Caret caret)
     {
         var commands = new List<Command>();
-        if (Singleton.TextBox.Overwrite)
+        if (TextBox.Ins.Overwrite)
         {
             if (LineManager.GetLine(caret.Position.LineIndex, out Line line))
             {
@@ -413,22 +413,22 @@ internal class EnterAction : Action
     {
         var commands = new List<Command>();
         commands.Add(new SplitLineCommand(EditDirection.Forward));
-        if (Singleton.TextBox.AutoIndent)
+        if (TextBox.Ins.AutoIndent)
         {
             if (LineManager.GetLine(caret.Position.LineIndex, out Line line))
             {
                 string lineString = line.String;
 
                 int tabCount = 0;
-                while (lineString.StartsWith(Singleton.TextBox.TabString))
+                while (lineString.StartsWith(TextBox.Ins.TabString))
                 {
-                    lineString = lineString.Remove(0, Singleton.TextBox.TabString.Length);
+                    lineString = lineString.Remove(0, TextBox.Ins.TabString.Length);
                     tabCount++;
                 }
 
                 if (tabCount > 0)
                 {
-                    var tabString = string.Concat(Enumerable.Repeat(Singleton.TextBox.TabString, tabCount));
+                    var tabString = string.Concat(Enumerable.Repeat(TextBox.Ins.TabString, tabCount));
                     commands.Add(new InputCharCommand(EditDirection.Forward, tabString.ToCharArray()));
                 }
             }
@@ -449,7 +449,7 @@ internal class TabAction : Action
             return commands;
         }
 
-        commands.Add(new InputCharCommand(EditDirection.Forward, Singleton.TextBox.TabString.ToCharArray()));
+        commands.Add(new InputCharCommand(EditDirection.Forward, TextBox.Ins.TabString.ToCharArray()));
         return commands;
     }
 }

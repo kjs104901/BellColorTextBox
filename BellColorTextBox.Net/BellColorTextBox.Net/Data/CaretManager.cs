@@ -7,51 +7,51 @@ namespace Bell.Data;
 // Interface
 internal partial class CaretManager
 {
-    internal static void ClearCarets() => Singleton.TextBox.CaretManager.ClearCarets_();
-    internal static void AddCaret(Coordinates coordinates) => Singleton.TextBox.CaretManager.AddCaret_(coordinates);
-    internal static void AddCaret(Caret caret) => Singleton.TextBox.CaretManager.AddCaret_(caret);
-    internal static int Count => Singleton.TextBox.CaretManager._carets.Count;
-    internal static Caret GetCaret(int index) => Singleton.TextBox.CaretManager._carets[index];
-    internal static bool GetFirstCaret(out Caret caret) => Singleton.TextBox.CaretManager.GetFirstCaret_(out caret);
+    internal static void ClearCarets() => TextBox.Ins.CaretManager.ClearCarets_();
+    internal static void AddCaret(Coordinates coordinates) => TextBox.Ins.CaretManager.AddCaret_(coordinates);
+    internal static void AddCaret(Caret caret) => TextBox.Ins.CaretManager.AddCaret_(caret);
+    internal static int Count => TextBox.Ins.CaretManager._carets.Count;
+    internal static Caret GetCaret(int index) => TextBox.Ins.CaretManager._carets[index];
+    internal static bool GetFirstCaret(out Caret caret) => TextBox.Ins.CaretManager.GetFirstCaret_(out caret);
 
     internal static void MoveCaretsPosition(CaretMove caretMove) =>
-        Singleton.TextBox.CaretManager.MoveCaretsPosition_(caretMove);
+        TextBox.Ins.CaretManager.MoveCaretsPosition_(caretMove);
 
     internal static void MoveCaretsAnchor(CaretMove caretMove) =>
-        Singleton.TextBox.CaretManager.MoveCaretsAnchor_(caretMove);
+        TextBox.Ins.CaretManager.MoveCaretsAnchor_(caretMove);
 
-    internal static bool HasCaretsSelection() => Singleton.TextBox.CaretManager.HasCaretsSelection_();
-    internal static void RemoveCaretsSelection() => Singleton.TextBox.CaretManager.RemoveCaretsSelection_();
-    internal static void RemoveCaretsLineSub() => Singleton.TextBox.CaretManager.RemoveCaretsLineSub_();
+    internal static bool HasCaretsSelection() => TextBox.Ins.CaretManager.HasCaretsSelection_();
+    internal static void RemoveCaretsSelection() => TextBox.Ins.CaretManager.RemoveCaretsSelection_();
+    internal static void RemoveCaretsLineSub() => TextBox.Ins.CaretManager.RemoveCaretsLineSub_();
 
     internal static void SelectRectangle(List<ValueTuple<Coordinates, Coordinates>> ranges, bool isReversed) =>
-        Singleton.TextBox.CaretManager.SelectRectangle_(ranges, isReversed);
+        TextBox.Ins.CaretManager.SelectRectangle_(ranges, isReversed);
 
-    internal static void CopyClipboard() => Singleton.TextBox.CaretManager.CopyClipboard_();
-    internal static void PasteClipboard() => Singleton.TextBox.CaretManager.PasteClipboard_();
-    internal static bool CheckValid(Caret caret) => Singleton.TextBox.CaretManager.CheckValid_(caret);
-    internal static string GetDebugString() => Singleton.TextBox.CaretManager.GetDebugString_();
+    internal static void CopyClipboard() => TextBox.Ins.CaretManager.CopyClipboard_();
+    internal static void PasteClipboard() => TextBox.Ins.CaretManager.PasteClipboard_();
+    internal static bool CheckValid(Caret caret) => TextBox.Ins.CaretManager.CheckValid_(caret);
+    internal static string GetDebugString() => TextBox.Ins.CaretManager.GetDebugString_();
 
     internal static void ShiftCaretChar(int lineIndex, int charIndex, EditDirection direction, int count) =>
-        Singleton.TextBox.CaretManager.ShiftCaretChar_(lineIndex, charIndex, direction, count);
+        TextBox.Ins.CaretManager.ShiftCaretChar_(lineIndex, charIndex, direction, count);
 
     internal static void InputCharCaret(Caret caret, int count) =>
-        Singleton.TextBox.CaretManager.InputCharCaret_(caret, count);
+        TextBox.Ins.CaretManager.InputCharCaret_(caret, count);
 
     internal static void DeleteCharCaret(Caret caret, int count) =>
-        Singleton.TextBox.CaretManager.DeleteCharCaret_(caret, count);
+        TextBox.Ins.CaretManager.DeleteCharCaret_(caret, count);
 
     internal static void ShiftCaretLine(int lineIndex, EditDirection direction) =>
-        Singleton.TextBox.CaretManager.ShiftCaretLine_(lineIndex, direction);
+        TextBox.Ins.CaretManager.ShiftCaretLine_(lineIndex, direction);
 
     internal static void MergeLineCaret(Caret caret, Line line, Line fromLine) =>
-        Singleton.TextBox.CaretManager.MergeLineCaret_(caret, line, fromLine);
+        TextBox.Ins.CaretManager.MergeLineCaret_(caret, line, fromLine);
 
     internal static void SplitLineCaret(Caret caret, Line line, Line toLine) =>
-        Singleton.TextBox.CaretManager.SplitLineCaret_(caret, line, toLine);
+        TextBox.Ins.CaretManager.SplitLineCaret_(caret, line, toLine);
     
     internal static bool IsLineHasCaret(int lineIndex) =>
-        Singleton.TextBox.CaretManager.IsLineHasCaret_(lineIndex);
+        TextBox.Ins.CaretManager.IsLineHasCaret_(lineIndex);
 }
 
 // Implementation
@@ -197,22 +197,22 @@ internal partial class CaretManager
             }
         }
 
-        Singleton.TextBox.Backend.SetClipboard(string.Join(Singleton.TextBox.GetEolString(), _clipboard));
+        TextBox.Ins.Backend.SetClipboard(string.Join(TextBox.Ins.GetEolString(), _clipboard));
     }
 
     private void PasteClipboard_()
     {
         if (HasCaretsSelection())
         {
-            Singleton.TextBox.ActionManager.DoAction(new DeleteSelectionAction());
+            TextBox.Ins.ActionManager.DoAction(new DeleteSelectionAction());
             RemoveCaretsSelection();
         }
         
-        string clipboardText = Singleton.TextBox.Backend.GetClipboard();
-        clipboardText = Singleton.TextBox.ReplaceTab(clipboardText);
-        clipboardText = Singleton.TextBox.ReplaceEol(clipboardText);
+        string clipboardText = TextBox.Ins.Backend.GetClipboard();
+        clipboardText = TextBox.Ins.ReplaceTab(clipboardText);
+        clipboardText = TextBox.Ins.ReplaceEol(clipboardText);
         
-        Singleton.TextBox.ActionManager.DoAction(new PasteAction(clipboardText));
+        TextBox.Ins.ActionManager.DoAction(new PasteAction(clipboardText));
         
         // TODO: If selected row number is same as pasted row number, directly paste
     }
@@ -395,6 +395,6 @@ internal partial class CaretManager
                 Logger.Info("Overlapped caret has been removed");
             }
         }
-        Singleton.TextBox.CaretBlinkStopwatch.Restart();
+        TextBox.Ins.CaretBlinkStopwatch.Restart();
     }
 }
