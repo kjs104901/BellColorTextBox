@@ -8,6 +8,7 @@ internal partial class RowManager
     internal static List<Row> Rows => Singleton.TextBox.RowManager._rowsCache.Get();
     internal static void SetRowCacheDirty() => Singleton.TextBox.RowManager.SetRowCacheDirty_();
     internal static void SetRowSelectionDirty() => Singleton.TextBox.RowManager.SetRowSelectionDirty_();
+    internal static void CheckSelectionUpdate() => Singleton.TextBox.RowManager.CheckSelectionUpdate_();
 }
 
 // Implementation
@@ -15,6 +16,8 @@ internal partial class RowManager
 {
     private readonly List<Row> _rows;
     private readonly Cache<List<Row>> _rowsCache;
+
+    private bool _isRowSelectionDirty = true;
 
     internal RowManager()
     {
@@ -77,9 +80,18 @@ internal partial class RowManager
     
     private void SetRowSelectionDirty_()
     {
+        _isRowSelectionDirty = true;
+    }
+
+    private void CheckSelectionUpdate_()
+    {
+        if (false == _isRowSelectionDirty)
+            return;
+        
         foreach (Row row in _rows)
         {
             row.RowSelectionCache.SetDirty();
         }
+        _isRowSelectionDirty = false;
     }
 }

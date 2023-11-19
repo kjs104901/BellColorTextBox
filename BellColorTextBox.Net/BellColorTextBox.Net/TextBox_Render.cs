@@ -34,6 +34,7 @@ public partial class TextBox
         LineNumberWidth = (StringPool<int>.Get(LineManager.Lines.Count).Length + 1) * FontManager.GetFontNumberWidth();
 
         LineManager.UpdateLanguageToken();
+        RowManager.CheckSelectionUpdate();
 
         int rowStart = GetRowIndex(_viewPos, -3);
         int rowEnd = GetRowIndex(_viewPos + _viewSize, 3);
@@ -157,7 +158,6 @@ public partial class TextBox
                 }
             }
         }
-
         
         // TODO: find a better way to scroll to caret
         //if (CaretManager.Count == 1 &&  CaretManager.GetFirstCaret(out var firstCaret) &&
