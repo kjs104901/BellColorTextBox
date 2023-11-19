@@ -38,7 +38,7 @@ Additionally, other rendering backends can be utilized, provided they implement 
 
 ## To Do
 - [ ] Documentation
-- [ ] Fin, Replace, Goto
+- [ ] Find, Replace, Goto
 - [ ] Overwrite mode
 - [ ] Auto completion
 - [ ] Singleline mode
