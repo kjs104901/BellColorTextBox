@@ -1,5 +1,6 @@
 ﻿using Bell.Data;
 using Bell.Languages;
+using Bell.Managers;
 using Bell.Themes;
 using Bell.Utils;
 

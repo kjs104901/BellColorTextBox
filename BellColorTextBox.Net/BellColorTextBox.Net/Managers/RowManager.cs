@@ -1,6 +1,7 @@
-﻿using Bell.Utils;
+﻿using Bell.Data;
+using Bell.Utils;
 
-namespace Bell.Data;
+namespace Bell.Managers;
 
 // Interface
 internal partial class RowManager
@@ -8,11 +9,10 @@ internal partial class RowManager
     internal static List<Row> Rows => TextBox.Ins.RowManager._rowsCache.Get();
     internal static void SetRowCacheDirty() => TextBox.Ins.RowManager.SetRowCacheDirty_();
     internal static void SetRowSelectionDirty() => TextBox.Ins.RowManager.SetRowSelectionDirty_();
-    internal static void CheckSelectionUpdate() => TextBox.Ins.RowManager.CheckSelectionUpdate_();
 }
 
 // Implementation
-internal partial class RowManager
+internal partial class RowManager  : IManager
 {
     private readonly List<Row> _rows;
     private readonly Cache<List<Row>> _rowsCache;
@@ -83,7 +83,7 @@ internal partial class RowManager
         _isRowSelectionDirty = true;
     }
 
-    private void CheckSelectionUpdate_()
+    public void Tick()
     {
         if (false == _isRowSelectionDirty)
             return;

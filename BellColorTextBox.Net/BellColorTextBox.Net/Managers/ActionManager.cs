@@ -1,9 +1,10 @@
 ﻿using System.Text;
-using Bell.Utils;
+using Bell.Actions;
+using Action = Bell.Actions.Action;
 
-namespace Bell.Actions;
+namespace Bell.Managers;
 
-internal class ActionManager
+internal class ActionManager : IManager
 {
     private const int HistoryCapacity = 1000;
     private readonly LinkedList<Action> _actionHistory = new();
@@ -113,5 +114,9 @@ internal class ActionManager
             sb.AppendLine(action.GetDebugString());
         }
         return sb.ToString();
+    }
+
+    public void Tick()
+    {
     }
 }

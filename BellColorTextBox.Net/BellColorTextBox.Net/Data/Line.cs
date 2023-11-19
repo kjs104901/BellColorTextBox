@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Bell.Languages;
+using Bell.Managers;
 using Bell.Themes;
 using Bell.Utils;
 

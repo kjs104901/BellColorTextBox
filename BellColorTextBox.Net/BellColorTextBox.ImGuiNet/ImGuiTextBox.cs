@@ -115,6 +115,7 @@ public class ImGuiTextBox
         Vector2 viewPos = new Vector2(ImGui.GetScrollX(), ImGui.GetScrollY());
         Vector2 viewSize = new Vector2(contentSize.X - ImGui.GetStyle().ScrollbarSize, contentSize.Y);
 
+        _textBox.Tick();
         _textBox.Render(viewPos, viewSize);
 
         ImGui.End();

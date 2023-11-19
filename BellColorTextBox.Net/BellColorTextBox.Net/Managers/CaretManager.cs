@@ -1,8 +1,9 @@
 ﻿using System.Text;
 using Bell.Actions;
+using Bell.Data;
 using Bell.Utils;
 
-namespace Bell.Data;
+namespace Bell.Managers;
 
 // Interface
 internal partial class CaretManager
@@ -55,7 +56,7 @@ internal partial class CaretManager
 }
 
 // Implementation
-internal partial class CaretManager
+internal partial class CaretManager : IManager
 {
     private readonly List<Caret> _carets = new();
     private readonly List<string> _clipboard = new();
@@ -396,5 +397,9 @@ internal partial class CaretManager
             }
         }
         TextBox.Ins.CaretBlinkStopwatch.Restart();
+    }
+    
+    public void Tick()
+    {
     }
 }

@@ -1,6 +1,6 @@
-﻿using Bell.Utils;
+﻿using Bell.Data;
 
-namespace Bell.Data;
+namespace Bell.Managers;
 
 // Interface
 internal partial class FontManager
@@ -17,7 +17,7 @@ internal partial class FontManager
 }
 
 // Implementation
-internal partial class FontManager
+internal partial class FontManager : IManager
 {
     private readonly Dictionary<float, Font> _fontDictionary = new();
 
@@ -57,5 +57,9 @@ internal partial class FontManager
     private float GetLineHeightOffset_()
     {
         return ((_fontCache.Size * TextBox.Ins.LeadingHeight) - _fontCache.Size) / 2.0f;
+    }
+    
+    public void Tick()
+    {
     }
 }

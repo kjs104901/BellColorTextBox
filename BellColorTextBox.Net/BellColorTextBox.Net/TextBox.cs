@@ -2,6 +2,7 @@
 using Bell.Actions;
 using Bell.Data;
 using Bell.Languages;
+using Bell.Managers;
 using Bell.Utils;
 
 namespace Bell;
@@ -10,11 +11,13 @@ public partial class TextBox
 {
     internal readonly IBackend Backend;
 
+    private readonly List<IManager> _managers = new();
     internal readonly ActionManager ActionManager = new();
     internal readonly CaretManager CaretManager = new();
     internal readonly FontManager FontManager = new();
     internal readonly LineManager LineManager = new();
     internal readonly RowManager RowManager = new();
+    
     internal readonly Logger Logger = new ();
     internal readonly CacheCounter CacheCounter = new();
     
@@ -40,6 +43,12 @@ public partial class TextBox
         Backend = backend;
         _tabStringCache = new Cache<string>("TabString", string.Empty, UpdateTabString);
         Text = "";
+        
+        _managers.Add(ActionManager);
+        _managers.Add(CaretManager);
+        _managers.Add(FontManager);
+        _managers.Add(LineManager);
+        _managers.Add(RowManager);
     }
     
     public string Text

@@ -2,6 +2,7 @@
 using System.Numerics;
 using Bell.Data;
 using Bell.Languages;
+using Bell.Managers;
 using Bell.Themes;
 using Bell.Utils;
 
@@ -16,6 +17,14 @@ public partial class TextBox
 
     internal int LinesPerPage => (int)(_viewSize.Y / FontManager.GetLineHeight());
 
+    public void Tick()
+    {
+        foreach (var manager in _managers)
+        {
+            manager.Tick();
+        }
+    }
+    
     public void Render(Vector2 viewPos, Vector2 viewSize)
     {
         Ins = this;
@@ -32,9 +41,6 @@ public partial class TextBox
         Backend.RenderPage(renderPageSize, ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector());
 
         LineNumberWidth = (StringPool<int>.Get(LineManager.Lines.Count).Length + 1) * FontManager.GetFontNumberWidth();
-
-        LineManager.UpdateLanguageToken();
-        RowManager.CheckSelectionUpdate();
 
         int rowStart = GetRowIndex(_viewPos, -3);
         int rowEnd = GetRowIndex(_viewPos + _viewSize, 3);

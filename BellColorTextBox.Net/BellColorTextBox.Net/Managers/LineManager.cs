@@ -1,8 +1,9 @@
 ﻿using Bell.Actions;
+using Bell.Data;
 using Bell.Languages;
 using Bell.Utils;
 
-namespace Bell.Data;
+namespace Bell.Managers;
 
 // Interface
 internal partial class LineManager
@@ -25,7 +26,6 @@ internal partial class LineManager
     internal static void RemoveLine(int removeLineIndex) =>
         TextBox.Ins.LineManager.RemoveLine_(removeLineIndex);
 
-    internal static void UpdateLanguageToken() => TextBox.Ins.LineManager._languageTokenCache.Get();
     internal static void SetLanguageTokenDirty() => TextBox.Ins.LineManager._languageTokenCache.SetDirty();
     
     internal static void ShiftFoldingLine(int lineIndex, EditDirection direction) =>
@@ -39,7 +39,7 @@ internal partial class LineManager
 }
 
 // Implementation
-internal partial class LineManager
+internal partial class LineManager : IManager
 {
     private readonly List<Line> _lines = new();
 
@@ -341,5 +341,10 @@ internal partial class LineManager
             maxLineWidth = Math.Max(maxLineWidth, line.Width);
         }
         return maxLineWidth;
+    }
+    
+    public void Tick()
+    {
+        TextBox.Ins.LineManager._languageTokenCache.Get();
     }
 }
