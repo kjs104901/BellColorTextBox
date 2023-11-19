@@ -1,8 +1,10 @@
 # BellColorTextBox
 
-The bell text box is an abstracted text box library that supports simple syntax highlighting.
+BellColorTextBox is a versatile text box library designed to support simple syntax highlighting.
 
-It allows the use of a desired rendering backend, and the directly supported backends will continue to be added
+It enables the integration of preferred rendering backends, including ImGui and WinForms.
+
+Additionally, other rendering backends can be utilized, provided they implement the 'ImGuiBackend' interface
 
 ![screenshot](https://raw.githubusercontent.com/kjs104901/BellColorTextBox/main/Documents/screenshot.PNG)
 
