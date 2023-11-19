@@ -6,12 +6,27 @@ internal class Row : IReusable
 {
     internal RowSelection RowSelection => RowSelectionCache.Get();
     internal readonly Cache<RowSelection> RowSelectionCache;
+    
+    internal int LineIndex = -1;
+    internal int LineSubIndex = -1;
+    internal LineSub? LineSub
+    {
+        get
+        {
+            if (LineIndex < 0 || LineSubIndex < 0)
+                return null;
 
-    internal LineSub? LineSub = null;
+            if (false == LineManager.GetLine(LineIndex, out Line line) || line.LineSubs.Count <= LineSubIndex)
+                return null;
+            
+            return line.LineSubs[LineSubIndex];
+        }
+    }
     
     public void Reset()
     {
-        LineSub = null;
+        LineIndex = -1;
+        LineSubIndex = -1;
         RowSelectionCache.SetDirty();
     }
 

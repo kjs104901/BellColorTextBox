@@ -58,11 +58,11 @@ internal partial class RowManager
 
             if (visible)
             {
-                foreach (var lineSub in line.LineSubs)
+                for (int i = 0; i < line.LineSubs.Count; i++)
                 {
                     Row row = Singleton.TextBox.RowPool.Get();
-                    row.LineSub = lineSub;
-                    
+                    row.LineIndex = line.Index;
+                    row.LineSubIndex = i;
                     rows.Add(row);
                 }
             }
