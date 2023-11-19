@@ -108,7 +108,7 @@ internal partial class CaretManager
         }
 
         RemoveDuplicatedCarets_();
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
     }
 
     private void MoveCaretsAnchor_(CaretMove caretMove)
@@ -119,7 +119,7 @@ internal partial class CaretManager
         }
 
         RemoveDuplicatedCarets_();
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
     }
 
     private bool HasCaretsSelection_()
@@ -141,7 +141,7 @@ internal partial class CaretManager
         }
 
         RemoveDuplicatedCarets_();
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
     }
 
     private void RemoveCaretsLineSub_()
@@ -151,7 +151,7 @@ internal partial class CaretManager
             caret.Position.LineSubIndex = -1;
             caret.AnchorPosition.LineSubIndex = -1;
         }
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
     }
 
     private void SelectRectangle_(List<ValueTuple<Coordinates, Coordinates>> ranges, bool isReversed)
@@ -175,7 +175,7 @@ internal partial class CaretManager
         }
 
         RemoveDuplicatedCarets_();
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
     }
 
     private void CopyClipboard_()

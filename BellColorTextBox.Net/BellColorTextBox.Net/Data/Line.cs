@@ -88,6 +88,11 @@ internal class Line
         UpdateTokens();
 
         LineManager.Unfold(Index);
+        
+        if (WrapMode.None != Singleton.TextBox.WrapMode)
+            RowManager.SetRowCacheDirty();
+        else
+            RowManager.SetRowSelectionDirty();
     }
 
     internal char[] RemoveChars(int charIndex, int count)
@@ -106,6 +111,11 @@ internal class Line
 
         LineManager.Unfold(Index);
 
+        if (WrapMode.None != Singleton.TextBox.WrapMode)
+            RowManager.SetRowCacheDirty();
+        else
+            RowManager.SetRowSelectionDirty();
+        
         return removed;
     }
 

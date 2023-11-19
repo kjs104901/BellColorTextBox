@@ -342,26 +342,26 @@ public partial class TextBox
                 if (CaretManager.GetFirstCaret(out Caret caret))
                 {
                     caret.AnchorPosition = coordinates;
-                    RowManager.SetRowCacheDirty();
+                    RowManager.SetRowSelectionDirty();
                 }
             }
             else if (_altPressed)
             {
                 CaretManager.AddCaret(coordinates);
-                RowManager.SetRowCacheDirty();
+                RowManager.SetRowSelectionDirty();
             }
             else
             {
                 CaretManager.ClearCarets();
                 CaretManager.AddCaret(coordinates);
-                RowManager.SetRowCacheDirty();
+                RowManager.SetRowSelectionDirty();
             }
         }
         else if (MouseAction.DoubleClick == mouseInput.LeftAction)
         {
             CaretManager.ClearCarets();
             CaretManager.AddCaret(coordinates);
-            RowManager.SetRowCacheDirty();
+            RowManager.SetRowSelectionDirty();
 
             if (_shiftPressed)
             {
@@ -391,7 +391,7 @@ public partial class TextBox
                 if (CaretManager.GetFirstCaret(out Caret caret))
                 {
                     caret.Position = coordinates;
-                    RowManager.SetRowCacheDirty();
+                    RowManager.SetRowSelectionDirty();
                 }
             }
         }
@@ -426,22 +426,22 @@ public partial class TextBox
 
     private void ProcessViewInput(Vector2 viewPos, Vector2 viewSize)
     {
-        if (MathHelper.IsNotSame(viewPos.X, _viewPos.X) ||
-            MathHelper.IsNotSame(viewPos.Y, _viewPos.Y) ||
-            MathHelper.IsNotSame(viewSize.X, _viewSize.X) ||
-            MathHelper.IsNotSame(viewSize.Y, _viewSize.Y))
+        if (WrapMode.None != WrapMode)
         {
-            _viewPos = viewPos;
-            _viewSize = viewSize;
-
-            foreach (Line line in LineManager.Lines)
+            if (MathHelper.IsNotSame(viewSize.X, _viewSize.X) ||
+                MathHelper.IsNotSame(viewSize.Y, _viewSize.Y))
             {
-                line.SetCutoffsDirty();
+                foreach (Line line in LineManager.Lines)
+                {
+                    line.SetCutoffsDirty();
+                }
+                CaretManager.RemoveCaretsLineSub();
+                RowManager.SetRowCacheDirty();
             }
-
-            CaretManager.RemoveCaretsLineSub();
-            RowManager.SetRowCacheDirty();
         }
+        
+        _viewPos = viewPos;
+        _viewSize = viewSize;
 
         if (WrapMode.Word == WrapMode || WrapMode.BreakWord == WrapMode)
         {

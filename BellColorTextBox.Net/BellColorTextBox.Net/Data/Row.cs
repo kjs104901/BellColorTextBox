@@ -4,20 +4,20 @@ namespace Bell.Data;
 
 internal class Row : IReusable
 {
-    internal RowSelection RowSelection => _rowSelectionCache.Get();
-    private readonly Cache<RowSelection> _rowSelectionCache;
+    internal RowSelection RowSelection => RowSelectionCache.Get();
+    internal readonly Cache<RowSelection> RowSelectionCache;
 
     internal LineSub? LineSub = null;
     
     public void Reset()
     {
         LineSub = null;
-        _rowSelectionCache.SetDirty();
+        RowSelectionCache.SetDirty();
     }
 
     public Row()
     {
-        _rowSelectionCache = new("Row Selection", new RowSelection()
+        RowSelectionCache = new("Row Selection", new RowSelection()
             {
                 CaretPositions = new()
             },

@@ -5,19 +5,21 @@ namespace Bell.Data;
 // Interface
 internal partial class RowManager
 {
-    internal static List<Row> Rows => Singleton.TextBox.RowManager._rows;
-    internal static void SetRowCacheDirty() => Singleton.TextBox.RowManager._rowsCache.SetDirty();
+    internal static List<Row> Rows => Singleton.TextBox.RowManager._rowsCache.Get();
+    internal static void SetRowCacheDirty() => Singleton.TextBox.RowManager.SetRowCacheDirty_();
+    internal static void SetRowSelectionDirty() => Singleton.TextBox.RowManager.SetRowSelectionDirty_();
 }
 
 // Implementation
 internal partial class RowManager
 {
-    private List<Row> _rows => _rowsCache.Get();
+    private readonly List<Row> _rows;
     private readonly Cache<List<Row>> _rowsCache;
 
     internal RowManager()
     {
-        _rowsCache = new Cache<List<Row>>("Rows", new List<Row>(), UpdateRows);
+        _rows = new();
+        _rowsCache = new Cache<List<Row>>("Rows", _rows, UpdateRows);
     }
 
     private List<Row> UpdateRows(List<Row> rows)
@@ -65,7 +67,19 @@ internal partial class RowManager
                 }
             }
         }
-
         return rows;
+    }
+
+    private void SetRowCacheDirty_()
+    {
+        _rowsCache.SetDirty();
+    }
+    
+    private void SetRowSelectionDirty_()
+    {
+        foreach (Row row in _rows)
+        {
+            row.RowSelectionCache.SetDirty();
+        }
     }
 }

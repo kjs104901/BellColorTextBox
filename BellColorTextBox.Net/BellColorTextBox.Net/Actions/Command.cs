@@ -36,8 +36,7 @@ internal class InputCharCommand : Command
         }
         
         line.InsertChars(caret.Position.CharIndex, _chars);
-        RowManager.SetRowCacheDirty();
-
+        
         if (EditDirection.Forward == _direction)
         {
             CaretManager.InputCharCaret(caret, _chars.Length);
@@ -91,8 +90,6 @@ internal class DeleteCharCommand : Command
                 _deletedCount = line.CharsCount - targetIndex;
             
             _deletedChars = line.RemoveChars(targetIndex, _deletedCount);
-            RowManager.SetRowCacheDirty();
-            
             CaretManager.ShiftCaretChar(caret.Position.LineIndex, caret.Position.CharIndex, EditDirection.Backward, _deletedCount);
         }
         else if (EditDirection.Backward == _direction)
@@ -101,12 +98,10 @@ internal class DeleteCharCommand : Command
                 _deletedCount = targetIndex;
                 
             _deletedChars = line.RemoveChars(targetIndex - _deletedCount, _deletedCount);
-            RowManager.SetRowCacheDirty();
-
             CaretManager.ShiftCaretChar(caret.Position.LineIndex, caret.Position.CharIndex, EditDirection.Backward, _deletedCount);
             CaretManager.DeleteCharCaret(caret, _deletedCount);
         }
-
+        
         if (_count != _deletedCount)
         {
             Logger.Error($"DeleteCharCommand: _count != _deletedCount {_count} {_deletedCount}");
@@ -220,8 +215,7 @@ internal class MergeLineCommand : Command
             
             CaretManager.MergeLineCaret(caret, line, nextLine);
             
-            line.InsertChars(line.CharsCount,
-                nextLine.RemoveChars(0, nextLine.CharsCount));
+            line.InsertChars(line.CharsCount, nextLine.RemoveChars(0, nextLine.CharsCount));
             
             LineManager.RemoveLine(nextLineIndex);
             CaretManager.ShiftCaretLine(nextLineIndex, EditDirection.Backward);
@@ -278,7 +272,6 @@ internal class IndentSelectionCommand : Command
 
             var tabChars = Singleton.TextBox.TabString;
             line.InsertChars(0, tabChars.ToCharArray());
-            RowManager.SetRowCacheDirty();
             CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Forward, tabChars.Length);
             
             _indentLineIndexList.Add(line.Index);
@@ -295,7 +288,6 @@ internal class IndentSelectionCommand : Command
                 if (line.GetSubString(0, tabChars.Length - 1) == tabChars)
                 {
                     line.RemoveChars(0, tabChars.Length);
-                    RowManager.SetRowCacheDirty();
                     CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Backward, tabChars.Length);
                 }
                 else
@@ -328,7 +320,6 @@ internal class UnindentSelectionCommand : Command
             if (line.GetSubString(0, tabChars.Length - 1) == tabChars)
             {
                 line.RemoveChars(0, tabChars.Length);
-                RowManager.SetRowCacheDirty();
                 CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Backward, tabChars.Length);
                 
                 _unindentLineIndexList.Add(line.Index);
@@ -344,7 +335,6 @@ internal class UnindentSelectionCommand : Command
             {
                 var tabChars = Singleton.TextBox.TabString;
                 line.InsertChars(0, tabChars.ToCharArray());
-                RowManager.SetRowCacheDirty();
                 CaretManager.ShiftCaretChar(line.Index, 0, EditDirection.Forward, tabChars.Length);
             }
         }

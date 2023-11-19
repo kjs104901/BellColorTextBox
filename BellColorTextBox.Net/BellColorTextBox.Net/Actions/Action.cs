@@ -32,8 +32,7 @@ internal abstract class Action
         {
             CaretManager.AddCaret(caret.Clone());
         }
-
-        RowManager.SetRowCacheDirty();
+        RowManager.SetRowSelectionDirty();
         return true;
     }
 
