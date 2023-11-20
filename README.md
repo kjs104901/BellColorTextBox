@@ -29,6 +29,7 @@ Additionally, other rendering backends can be utilized, provided they implement 
 - Multiple carets
 - AutoIndent
 - ReadOnly
+- Overwrite
 - WordWrap
 - Eol
 - Folding
@@ -39,9 +40,7 @@ Additionally, other rendering backends can be utilized, provided they implement 
 ## To Do
 - [ ] Documentation
 - [ ] Find, Replace, Goto
-- [ ] Overwrite mode
 - [ ] Auto completion
-- [ ] Singleline mode
 - [ ] Auto scroll
 - [ ] Multiple caret paste
 - [ ] Add languages
