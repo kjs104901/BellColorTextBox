@@ -8,7 +8,7 @@
     <PackageProjectUrl></PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/kjs104901/BellColorTextBox</RepositoryUrl>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <Company>kjs104901</Company>
     <Authors>kjs104901</Authors>
     <Description>Abstracted text box library</Description>
