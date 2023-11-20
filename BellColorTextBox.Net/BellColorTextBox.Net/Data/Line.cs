@@ -8,7 +8,7 @@ using Bell.Utils;
 
 namespace Bell.Data;
 
-internal class Line
+internal class Line : IReusable
 {
     internal int Index;
 
@@ -23,8 +23,9 @@ internal class Line
     internal string String => _stringCache.Get();
     private readonly Cache<string> _stringCache;
 
-    internal List<ColorStyle> Colors => _colorsCache.Get();
+    private List<ColorStyle> Colors => _colorsCache.Get();
     private readonly Cache<List<ColorStyle>> _colorsCache;
+    private List<ColorStyle> _colors = new();
 
     private HashSet<int> Cutoffs => _cutoffsCache.Get();
     private readonly Cache<HashSet<int>> _cutoffsCache;
@@ -34,6 +35,8 @@ internal class Line
 
     private readonly List<Language.Token> _oldTokens = new();
     internal readonly List<Language.Token> Tokens = new();
+    private bool _OldEndsInMultilineString = false;
+    internal bool EndsInMultilineString = false;
 
     internal readonly List<ValueTuple<int, int>> CommentRanges = new();
     internal int CommentStart = -1;
@@ -43,13 +46,11 @@ internal class Line
     // buffer to avoid GC
     private readonly StringBuilder _sb = new();
 
-    internal static readonly Line None = new(0);
+    internal static readonly Line None = new() { Index = -1 };
 
-    internal Line(int index)
+    public Line()
     {
-        Index = index;
-
-        _colorsCache = new("Colors", new(), UpdateColors, updateIntervalMs: 300);
+        _colorsCache = new("Colors", _colors, UpdateColors, updateIntervalMs: 300);
         _cutoffsCache = new("Cutoffs", new(), UpdateCutoff);
         _stringCache = new("String", string.Empty, UpdateString);
         _lineSubsCache = new("Line Subs", new List<LineSub>(), UpdateLineSubs);
@@ -67,21 +68,28 @@ internal class Line
         }
     }
 
+    internal void SetText(string text)
+    {
+        _chars.Clear();
+        _chars.AddRange(text);
+        UpdateTokens();
+    }
+
     internal void InsertChars(int charIndex, char[] chars)
     {
         _chars.InsertRange(charIndex, chars);
 
         ColorStyle prevStyle = ColorStyle.None;
         int prevIndex = charIndex - 1;
-        if (prevIndex >= 0 && Colors.Count > prevIndex)
-            prevStyle = Colors[prevIndex];
+        if (prevIndex >= 0 && _colors.Count > prevIndex)
+            prevStyle = _colors[prevIndex];
 
-        while (Colors.Count < charIndex)
-            Colors.Add(prevStyle);
+        while (_colors.Count < charIndex)
+            _colors.Add(prevStyle);
 
         for (int i = 0; i < chars.Length; i++)
         {
-            Colors.Insert(charIndex, prevStyle);
+            _colors.Insert(charIndex, prevStyle);
         }
 
         SetCharsDirty();
@@ -101,10 +109,10 @@ internal class Line
         var removed = _chars.GetRange(charIndex, count).ToArray();
         _chars.RemoveRange(charIndex, count);
 
-        while (Colors.Count < charIndex + count)
-            Colors.Add(ColorStyle.None);
+        while (_colors.Count < charIndex + count)
+            _colors.Add(ColorStyle.None);
 
-        Colors.RemoveRange(charIndex, count);
+        _colors.RemoveRange(charIndex, count);
 
         SetCharsDirty();
         SetCutoffsDirty();
@@ -151,12 +159,13 @@ internal class Line
             colors.Add(ColorStyle.None);
         }
 
+        string text = String;
         foreach (var kv in TextBox.Ins.Language.PatternsStyle)
         {
             Regex regex = kv.Key;
             ColorStyle colorStyle = TextBox.Ins.Theme.TokenColors[kv.Value];
 
-            foreach (Match match in regex.Matches(String))
+            foreach (Match match in regex.Matches(text))
             {
                 for (int i = match.Index; i < match.Index + match.Length && i < colors.Count; i++)
                 {
@@ -305,11 +314,15 @@ internal class Line
 
     private void UpdateTokens()
     {
+        Language language = TextBox.Ins.Language;
+        
         Tokens.Clear();
-
-        for (int i = 0; i < String.Length; i++)
+        EndsInMultilineString = false;
+        
+        string text = String;
+        for (int i = 0; i < text.Length; i++)
         {
-            if (TextBox.Ins.Language.FindMatching(String, i, out Language.Token matchedToken))
+            if (language.FindMatching(text, i, out Language.Token matchedToken))
             {
                 Tokens.Add(matchedToken);
                 i += matchedToken.TokenString.Length;
@@ -321,6 +334,21 @@ internal class Line
         {
             _oldTokens.Clear();
             _oldTokens.AddRange(Tokens);
+            LineManager.SetLanguageTokenDirty();
+        }
+        
+        foreach (string postfix in language.MultilinePostfixes)
+        {
+            if (!text.EndsWith(postfix, StringComparison.Ordinal))
+                continue;
+            
+            EndsInMultilineString = true;
+            break;
+        }
+
+        if (_OldEndsInMultilineString != EndsInMultilineString)
+        {
+            _OldEndsInMultilineString = EndsInMultilineString;
             LineManager.SetLanguageTokenDirty();
         }
     }
@@ -409,5 +437,29 @@ internal class Line
             endCharIndex = _chars.Count - 1;
 
         return String.Substring(startCharIndex, endCharIndex - startCharIndex + 1);
+    }
+
+    public void Reset()
+    {
+        Index = 0;
+        
+        _chars.Clear();
+        Folding = Folding.None;
+        Width = 0.0f;
+        
+        _stringCache.SetDirty();
+        _colorsCache.SetDirty();
+        _cutoffsCache.SetDirty();
+        _lineSubsCache.SetDirty();
+    
+        _oldTokens.Clear();
+        Tokens.Clear();
+        
+        CommentRanges.Clear();
+        CommentStart = -1;
+        StringRanges.Clear();
+        StringStart = -1;
+    
+        _sb.Clear();
     }
 }

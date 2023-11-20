@@ -9,7 +9,7 @@ public class Logger
 
     public enum Level
     {
-        Info,
+        Debug,
         Warning,
         Error,
     }
@@ -17,9 +17,9 @@ public class Logger
     private readonly Queue<ValueTuple<Level, string, string>> _logs = new();
 
     [Conditional("DEBUG")]
-    public static void Info(string message, [CallerMemberName] string callerMemberName = "")
+    public static void Debug(string message, [CallerMemberName] string callerMemberName = "")
     {
-        TextBox.Ins.Logger.AddLog(Level.Info, callerMemberName, message);
+        TextBox.Ins.Logger.AddLog(Level.Debug, callerMemberName, message);
     }
 
     [Conditional("DEBUG")]

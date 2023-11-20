@@ -267,8 +267,7 @@ internal partial class CaretManager : IManager
                 }
             }
 
-            Logger.Info(
-                "ShiftCaretChar: " + caret.Position.LineIndex + " " + caret.Position.CharIndex + " " + moveCount);
+            //Logger.Debug("ShiftCaretChar: " + caret.Position.LineIndex + " " + caret.Position.CharIndex + " " + moveCount);
         }
     }
 
@@ -305,7 +304,7 @@ internal partial class CaretManager : IManager
                 c.AnchorPosition.Validate();
             }
 
-            Logger.Info("ShiftCaretLine: " + c.Position.LineIndex + " " + c.Position.CharIndex + " " + moveCount);
+            //Logger.Debug("ShiftCaretLine: " + c.Position.LineIndex + " " + c.Position.CharIndex + " " + moveCount);
         }
     }
 
@@ -327,7 +326,7 @@ internal partial class CaretManager : IManager
                 //c.AnchorPosition.Validate(); Skip this validation because of command order. TODO: Fix this
             }
 
-            Logger.Info("MergeLineCaret: " + c.Position.LineIndex + " " + c.Position.CharIndex);
+            //Logger.Debug("MergeLineCaret: " + c.Position.LineIndex + " " + c.Position.CharIndex);
         }
 
         caret.RemoveSelection();
@@ -358,7 +357,7 @@ internal partial class CaretManager : IManager
                 }
             }
 
-            Logger.Info("SplitLineCaret: " + c.Position.LineIndex + " " + c.Position.CharIndex);
+            //Logger.Debug("SplitLineCaret: " + c.Position.LineIndex + " " + c.Position.CharIndex);
         }
 
         caret.RemoveSelection();
@@ -393,7 +392,8 @@ internal partial class CaretManager : IManager
 
                 // overlapped
                 _carets.RemoveAt(i);
-                Logger.Info("Overlapped caret has been removed");
+                
+                //Logger.Debug("Overlapped caret has been removed");
             }
         }
         TextBox.Ins.CaretBlinkStopwatch.Restart();

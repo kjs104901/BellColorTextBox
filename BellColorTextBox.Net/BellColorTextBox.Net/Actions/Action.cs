@@ -54,7 +54,7 @@ internal abstract class Action
 
             foreach (Command command in commands)
             {
-                Logger.Info($"DoCommands: {command.GetDebugString()}");
+                //Logger.Debug($"DoCommands: {command.GetDebugString()}");
                 command.Do(caret);
             }
         }
@@ -118,7 +118,7 @@ internal abstract class Action
 
             foreach (Command command in commands)
             {
-                Logger.Info($"RedoCommands: {command.GetDebugString()}");
+                //Logger.Debug($"RedoCommands: {command.GetDebugString()}");
                 command.Do(caret);
             }
         }
@@ -154,7 +154,7 @@ internal abstract class Action
             for (int j = commands.Count - 1; j >= 0; j--)
             {
                 Command command = commands[j];
-                Logger.Info($"UndoCommands: {command.GetDebugString()}");
+                //Logger.Debug($"UndoCommands: {command.GetDebugString()}");
                 command.Undo(caret);
             }
         }
@@ -418,7 +418,7 @@ internal class EnterAction : Action
         {
             if (LineManager.GetLine(caret.Position.LineIndex, out Line line))
             {
-                string lineString = line.String;
+                string lineString = line.String.Substring(0, caret.Position.CharIndex);
 
                 int tabCount = 0;
                 while (lineString.StartsWith(TextBox.Ins.TabString))

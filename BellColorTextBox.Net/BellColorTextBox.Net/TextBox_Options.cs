@@ -168,20 +168,26 @@ public partial class TextBox
     
     internal string ReplaceTab(string text)
     {
-        switch (TabMode)
+        if (TabMode == TabMode.Space && text.Contains('\t'))
         {
-            case TabMode.Space:
-                return text.Replace("\t", new string(' ', TabSize));
-            case TabMode.Tab:
-                return text.Replace(new string(' ', TabSize), "\t");
+            return text.Replace("\t", new string(' ', TabSize));
         }
+        else if (TabMode == TabMode.Tab && text.Contains(new string(' ', TabSize)))
+        {
+            return text.Replace(new string(' ', TabSize), "\t");
+        }
+
         return text;
     }
 
     internal string ReplaceEol(string text)
     {
-        return text.Replace("\r\n", "\n")
-            .Replace("\r", "\n");
+        if (text.Contains('\r'))
+        {
+            return text.Replace("\r\n", "\n")
+                .Replace("\r", "\n");
+        }
+        return text;
     }
 
     internal string GetEolString()

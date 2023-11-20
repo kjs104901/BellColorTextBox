@@ -12,52 +12,94 @@ public partial class Language
         LineComment,
         BlockCommentStart,
         BlockCommentEnd,
-        MultilineStringStart,
-        MultilineStringEnd,
+        MultilineString,
         String,
         FoldingStart,
         FoldingEnd
     }
-    internal readonly Dictionary<TokenType, List<string>> Tokens = new()
-    {
-        { TokenType.LineComment, new() },
-        { TokenType.BlockCommentStart, new() },
-        { TokenType.BlockCommentEnd, new() },
-        { TokenType.MultilineStringStart, new() },
-        { TokenType.MultilineStringEnd, new() },
-        { TokenType.String, new() },
-        { TokenType.FoldingStart, new() },
-        { TokenType.FoldingEnd, new() },
-    };
 
-    internal Dictionary<Regex, Theme.Token> PatternsStyle = new();
+    private readonly List<TokenType> _tokenTypes = new()
+    {
+        TokenType.LineComment,
+        TokenType.BlockCommentStart,
+        TokenType.BlockCommentEnd,
+        TokenType.MultilineString,
+        TokenType.String,
+        TokenType.FoldingStart,
+        TokenType.FoldingEnd
+    };
     
+    // Don't use dictionary for performance
+    internal readonly List<string> LineComments = new();
+    internal readonly List<string> BlockCommentStarts = new();
+    internal readonly List<string> BlockCommentEnds = new();
+    internal readonly List<string> MultilineStrings = new();
+    internal readonly List<string> Strings = new();
+    internal readonly List<string> FoldingStarts = new();
+    internal readonly List<string> FoldingEnds = new();
+    private List<string> GetTokenStringList(TokenType tokenType)
+    {
+        // Don't use default for performance
+        switch (tokenType)
+        {
+            case TokenType.LineComment:
+                return LineComments;
+            case TokenType.BlockCommentStart:
+                return BlockCommentStarts;
+            case TokenType.BlockCommentEnd:
+                return BlockCommentEnds;
+            case TokenType.MultilineString:
+                return MultilineStrings;
+            case TokenType.String:
+                return Strings;
+            case TokenType.FoldingStart:
+                return FoldingStarts;
+            case TokenType.FoldingEnd:
+                return FoldingEnds;
+        }
+        throw new ArgumentOutOfRangeException();
+    }
+    
+    internal readonly Dictionary<Regex, Theme.Token> PatternsStyle = new();
+    
+    internal readonly List<string> MultilinePrefixes = new();
+    internal readonly List<string> MultilinePostfixes = new();
+
     public void AddLineComment(string str)
     {
-        Tokens[TokenType.LineComment].Add(str);
+        LineComments.Add(str);
     }
 
     public void AddBlockComment(string startStr, string endStr)
     {
-        Tokens[TokenType.BlockCommentStart].Add(startStr);
-        Tokens[TokenType.BlockCommentEnd].Add(endStr);
+        BlockCommentStarts.Add(startStr);
+        BlockCommentEnds.Add(endStr);
+    }
+    
+    public void AddMultilineString(string str)
+    {
+        MultilineStrings.Add(str);
     }
     
     public void AddString(string str)
     {
-        Tokens[TokenType.String].Add(str);
+        Strings.Add(str);
     }
     
-    public void AddMultilineString(string startStr, string endStr)
+    public void AddMultilinePrefix(string str)
     {
-        Tokens[TokenType.MultilineStringStart].Add(startStr);
-        Tokens[TokenType.MultilineStringEnd].Add(endStr);
+        MultilinePrefixes.Add(str);
     }
     
     public void AddFolding(string startStr, string endStr)
     {
-        Tokens[TokenType.FoldingStart].Add(startStr);
-        Tokens[TokenType.FoldingEnd].Add(endStr);
+        FoldingStarts.Add(startStr);
+        FoldingEnds.Add(endStr);
+    }
+    
+    public void AddMultilinePostfix(string str)
+    {
+        MultilinePostfixes.Add(str);
     }
     
     public void AddPattern(string regex, Theme.Token token, RegexOptions regexOptions = RegexOptions.None)
@@ -69,9 +111,9 @@ public partial class Language
     {
         matchedToken = new Token();
 
-        foreach (TokenType tokenType in Tokens.Keys.OrderBy(k => k))
+        foreach (TokenType tokenType in _tokenTypes)
         {
-            List<string> tokenStringList = Tokens[tokenType];
+            List<string> tokenStringList = GetTokenStringList(tokenType);
             for (int tokenIndex = 0; tokenIndex < tokenStringList.Count; tokenIndex++)
             {
                 string tokenString = tokenStringList[tokenIndex];
@@ -97,6 +139,31 @@ public partial class Language
                     
                     matchedToken.CharIndex = charIndex;
                     
+                    matchedToken.IsMultiline = false;
+
+                    if (TokenType.String == tokenType)
+                    {
+                        foreach (string prefix in MultilinePrefixes)
+                        {
+                            bool isSamePrefix = true;
+                            for (int i = 0; i < prefix.Length; i++)
+                            {
+                                int prefixIndex = charIndex - prefix.Length + i;
+                                if (prefixIndex < 0 || source[prefixIndex] != prefix[i])
+                                {
+                                    isSamePrefix = false;
+                                    break;
+                                }
+                            }
+
+                            if (isSamePrefix)
+                            {
+                                matchedToken.IsMultiline = true;
+                                matchedToken.CharIndex -= prefix.Length;
+                                break;
+                            }
+                        }
+                    }
                     return true;
                 }
             }
@@ -111,6 +178,8 @@ public partial class Language
         internal string TokenString;
         
         internal int CharIndex;
+        
+        internal bool IsMultiline;
 
         public bool Equals(Token other)
         {

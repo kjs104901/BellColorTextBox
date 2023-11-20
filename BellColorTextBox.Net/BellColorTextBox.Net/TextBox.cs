@@ -21,6 +21,7 @@ public partial class TextBox
     internal readonly Logger Logger = new ();
     internal readonly CacheCounter CacheCounter = new();
     
+    internal readonly ObjectPool<Line> LinePool = new();
     internal readonly ObjectPool<LineSub> LineSubPool = new();
     internal readonly ObjectPool<Row> RowPool = new();
     
@@ -78,7 +79,9 @@ public partial class TextBox
             int i = 0;
             foreach (string lineText in text.Split('\n'))
             {
-                Line line = new Line(i++);
+                Line line = TextBox.Ins.LinePool.Get();
+                line.Index = i++;
+                
                 LineManager.Lines.Add(line);
             
                 line.InsertChars(0, lineText.ToCharArray());

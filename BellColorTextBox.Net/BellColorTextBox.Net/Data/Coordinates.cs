@@ -121,8 +121,7 @@ internal struct Coordinates
             newCoordinates = newCoordinates.FindMoveSingle(caretMove);
         }
 
-        Logger.Info("FindMove: " + caretMove + " " + count + " " + newCoordinates.LineIndex + " " +
-                    newCoordinates.CharIndex);
+        //Logger.Debug("FindMove: " + caretMove + " " + count + " " + newCoordinates.LineIndex + " " + newCoordinates.CharIndex);
 
         if (IsValid())
         {
