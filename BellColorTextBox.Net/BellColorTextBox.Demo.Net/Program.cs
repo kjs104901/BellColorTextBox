@@ -18,10 +18,13 @@ namespace BellColorTextBox.Demo.Net
         static void Main(string[] args)
         {
             // Hide console
-            ShowWindow(GetConsoleWindow(), SW_HIDE);
+            ShowWindow(GetConsoleWindow(), SW_SHOW);
 
-            var imGuiThread = ImGuiDemo.ThreadStart();
+            Thread imGuiThread = ImGuiDemo.ThreadStart();
+            Thread winFormThread = WinFormDemo.ThreadStart();
+
             imGuiThread.Join();
+            winFormThread.Join();
         }
     }
 }
