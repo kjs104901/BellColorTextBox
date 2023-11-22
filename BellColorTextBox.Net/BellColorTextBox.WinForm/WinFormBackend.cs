@@ -8,11 +8,12 @@ namespace Bell;
 internal class WinFormBackend : IBackend
 {
     private TextBoxControl _control;
+    internal Graphics? Graphics;
 
     internal Vector2 PageSize;
 
-    private KeyboardInput _keyboardInput = new() { Chars = new List<char>() };
-    private MouseInput _mouseInput;
+    internal KeyboardInput KeyboardInput = new() { Chars = new List<char>() };
+    internal MouseInput MouseInput;
 
     private readonly Dictionary<Keys, HotKeys> _keyboardMapping = new()
     {
@@ -51,7 +52,7 @@ internal class WinFormBackend : IBackend
 
     public float GetCharWidth(char c)
     {
-        if (null == _control.Graphics || null == _control.Font)
+        if (null == Graphics || null == _control.Font)
             return 0.0f;
 
         var text = c.ToString();
@@ -63,8 +64,8 @@ internal class WinFormBackend : IBackend
                                             StringFormatFlags.NoClip | StringFormatFlags.LineLimit);
         format.SetMeasurableCharacterRanges(ranges);
 
-        Region[] regions = _control.Graphics.MeasureCharacterRanges(text, _control.Font, new(), format);
-        rect = regions[0].GetBounds(_control.Graphics);
+        Region[] regions = Graphics.MeasureCharacterRanges(text, _control.Font, new(), format);
+        rect = regions[0].GetBounds(Graphics);
 
         return rect.Width;
     }
@@ -86,12 +87,12 @@ internal class WinFormBackend : IBackend
 
     public KeyboardInput GetKeyboardInput()
     {
-        return _keyboardInput;
+        return KeyboardInput;
     }
 
     public MouseInput GetMouseInput()
     {
-        return _mouseInput;
+        return MouseInput;
     }
 
     public float GetScrollX()
@@ -118,14 +119,11 @@ internal class WinFormBackend : IBackend
 
     public void OnInputEnd()
     {
-        _keyboardInput.HotKeys = HotKeys.None;
-        _keyboardInput.Chars.Clear();
-        _keyboardInput.ImeComposition = string.Empty;
+        KeyboardInput.HotKeys = HotKeys.None;
+        KeyboardInput.Chars.Clear();
 
-        _mouseInput.Position.X = 0.0f;
-        _mouseInput.Position.Y = 0.0f;
-        _mouseInput.LeftAction = MouseAction.None;
-        _mouseInput.MiddleAction = MouseAction.None;
+        MouseInput.LeftAction = MouseAction.None;
+        MouseInput.MiddleAction = MouseAction.None;
     }
 
     public void RenderIcon(Vector2 pos, GuiIcon icon, Vector4 color, float ratio = 1)
@@ -135,61 +133,83 @@ internal class WinFormBackend : IBackend
 
     public void RenderLine(Vector2 start, Vector2 end, Vector4 color, float thickness)
     {
-        //throw new NotImplementedException();
+        if (null == Graphics)
+            return;
+
+        using SolidBrush brush = new SolidBrush(VectorToColor(color));
+        
+        PointF startPoint = GetDrawPoint(start);
+        PointF endPoint = GetDrawPoint(end);
+
+        Graphics.DrawLine(new Pen(brush, thickness), startPoint, endPoint);
     }
 
     public void RenderPage(Vector2 size, Vector4 color)
     {
-        if (null == _control.Graphics)
+        if (null == Graphics)
             return;
 
         PageSize = size;
 
         using SolidBrush brush = new SolidBrush(VectorToColor(color));
 
-        _control.Graphics.FillRectangle(brush, new Rectangle(0, 0, (int)size.X, (int)size.Y));
+        Graphics.FillRectangle(brush, new RectangleF(0, 0, size.X, size.Y));
     }
 
     public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color)
     {
-        if (null == _control.Graphics)
+        if (null == Graphics)
             return;
 
         using SolidBrush brush = new SolidBrush(VectorToColor(color));
 
-        _control.Graphics.FillRectangle(brush, new Rectangle((int)start.X, (int)start.Y, (int)end.X - (int)start.X, (int)end.Y - (int)start.Y));
+        PointF startPoint = GetDrawPoint(start);
+        PointF endPoint = GetDrawPoint(end);
+        
+        Graphics.FillRectangle(brush, new RectangleF(startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
+        
+        Graphics.FillRectangle(new SolidBrush(Color.Brown), (int)start.X, (int)start.Y, (int)end.X - (int)start.X, (int)end.Y - (int)start.Y);
     }
 
     public void RenderText(Vector2 pos, string text, Vector4 color)
     {
-        if (null == _control.Graphics)
+        if (null == Graphics)
             return;
 
         using SolidBrush brush = new SolidBrush(VectorToColor(color));
-        _control.Graphics.DrawString(text, _control.Font, brush, pos.X, pos.Y);
+        Graphics.DrawString(text, _control.Font, brush, GetDrawPoint(pos));
     }
 
     public void SetMouseCursor(MouseCursor mouseCursor)
     {
-        throw new NotImplementedException();
     }
 
     internal void OnKeyPress(KeyPressEventArgs e)
     {
-        _keyboardInput.Chars.Add(e.KeyChar);
+        KeyboardInput.Chars.Add(e.KeyChar);
     }
 
     internal void ProcessCmdKey(ref Message msg, Keys keyData)
     {
         if (_keyboardMapping.TryGetValue(keyData, out HotKeys hotKeys))
         {
-            _keyboardInput.HotKeys |= hotKeys;
+            KeyboardInput.HotKeys |= hotKeys;
         }
     }
-
-
+    
+    internal void OnImeComposition(string text)
+    {
+        Console.WriteLine(text);
+        KeyboardInput.ImeComposition = text;
+    }
+    
     private static Color VectorToColor(Vector4 color)
     {
         return Color.FromArgb((int)(color.W * 255), (int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
+    }
+    
+    private PointF GetDrawPoint(Vector2 pos)
+    {
+        return new PointF(pos.X - _control.HorizontalScroll.Value, pos.Y - _control.VerticalScroll.Value);
     }
 }

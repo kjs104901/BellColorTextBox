@@ -4,6 +4,8 @@ using System.Drawing;
 using Timer = System.Windows.Forms.Timer;
 using Bell.Languages;
 using System.Runtime.InteropServices;
+using System.Text;
+using Bell.Inputs;
 
 namespace Bell;
 
@@ -12,8 +14,6 @@ public class TextBoxControl : UserControl
     private TextBox _textBox;
     private WinFormBackend _backend;
     private Timer _timer;
-
-    internal Graphics? Graphics;
 
     // Options
     public bool ReadOnly { get => _textBox.ReadOnly; set => _textBox.ReadOnly = value; }
@@ -29,7 +29,7 @@ public class TextBoxControl : UserControl
     public TabMode TabMode { get => _textBox.TabMode; set => _textBox.TabMode = value; }
     public int TabSize { get => _textBox.TabSize; set => _textBox.TabSize = value; }
     public Language Language { get => _textBox.Language; set => _textBox.Language = value; }
-    override public string Text { get => _textBox.Text; set => _textBox.Text = value; }
+    public override string Text { get => _textBox.Text; set => _textBox.Text = value; }
     public bool IsDebugMode { get => _textBox.IsDebugMode; set => _textBox.IsDebugMode = value; }
 
 
@@ -46,8 +46,6 @@ public class TextBoxControl : UserControl
         _timer.Interval = 100;
         _timer.Tick += TimerTick;
         _timer.Start();
-
-        ChangeIME();
     }
 
     private void TimerTick(object? sender, EventArgs e)
@@ -55,47 +53,88 @@ public class TextBoxControl : UserControl
         Invalidate();
     }
 
+    protected override bool CanEnableIme => true;
+    protected override ImeMode ImeModeBase => ImeMode.On;
+
     protected override void OnKeyPress(KeyPressEventArgs e)
     {
-        Console.WriteLine(e.KeyChar);
-
         base.OnKeyPress(e);
         _backend.OnKeyPress(e);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        Console.WriteLine(e.KeyValue);
-
-        base.OnKeyDown(e);
-    }
-
-
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
+        bool result = base.ProcessCmdKey(ref msg, keyData);
         _backend.ProcessCmdKey(ref msg, keyData);
-        return base.ProcessCmdKey(ref msg, keyData);
+        return result;
+    }
+
+    protected override void OnMouseClick(MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+            _backend.MouseInput.LeftAction = MouseAction.Click;
+        else if (e.Button == MouseButtons.Middle)
+            _backend.MouseInput.MiddleAction = MouseAction.Click;
+        base.OnMouseClick(e);
+    }
+
+    protected override void OnMouseDoubleClick(MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+            _backend.MouseInput.LeftAction = MouseAction.DoubleClick;
+        else if (e.Button == MouseButtons.Middle)
+            _backend.MouseInput.MiddleAction = MouseAction.DoubleClick;
+        base.OnMouseDoubleClick(e);
+    }
+
+    protected override void OnMouseDown(MouseEventArgs e)
+    {
+        //if (e.Button == MouseButtons.Left)
+        //    _backend.MouseInput.LeftAction = MouseAction.Dragging;
+        //else if (e.Button == MouseButtons.Middle)
+        //    _backend.MouseInput.MiddleAction = MouseAction.Dragging;
+        //base.OnMouseDown(e);
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        _backend.MouseInput.Position.X = e.X + HorizontalScroll.Value;
+        _backend.MouseInput.Position.Y = e.Y + VerticalScroll.Value;
+        base.OnMouseMove(e);
+    }
+
+    protected override void OnScroll(ScrollEventArgs se)
+    {
+        Invalidate();
+        base.OnScroll(se);
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        Invalidate();
+        base.OnResize(e);
     }
 
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        Graphics = e.Graphics;
+        _backend.Graphics = e.Graphics;
 
         AutoScrollMinSize = new Size((int)_backend.PageSize.X - SystemInformation.VerticalScrollBarWidth, (int)_backend.PageSize.Y);
-        _textBox.Render(new Vector2(0, 0), new Vector2(Width, Height));
+        _textBox.Render(new Vector2(HorizontalScroll.Value, VerticalScroll.Value), new Vector2(Width, Height));
     }
-    [DllImport("imm32.dll")]
-    public static extern IntPtr ImmGetContext(IntPtr hWnd);
-    [DllImport("imm32.dll")]
-    public static extern Boolean ImmSetConversionStatus(IntPtr hIMC, Int32 fdwConversion, Int32 fdwSentence);
 
-    public const int IME_CMODE_LANGUAGE = 0x1; // Example value
-    public const int IME_CMODE_ALPHANUMERIC = 0x0; // Example value
-
-    private void ChangeIME()
+    protected override void WndProc(ref Message m)
     {
-        IntPtr context = ImmGetContext(Handle);
-        ImmSetConversionStatus(context, IME_CMODE_LANGUAGE, 0);
+        if (m.Msg == NativeMethods.WM_IME_COMPOSITION)
+        {
+            _backend.OnImeComposition(NativeMethods.GetCompositionString(Handle));
+        }
+        else if (m.Msg == NativeMethods.WM_IME_STARTCOMPOSITION)
+        {
+            NativeMethods.SetCompositionWindowOffScreen(Handle);
+            return;
+        }
+        base.WndProc(ref m);
     }
 }

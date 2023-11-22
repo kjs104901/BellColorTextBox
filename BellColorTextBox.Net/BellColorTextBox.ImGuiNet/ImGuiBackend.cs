@@ -92,7 +92,7 @@ public class ImGuiBackend : IBackend
 
             if (OperatingSystem.IsWindows())
             {
-                _keyboardInput.ImeComposition = WindowsNative.GetCompositionString();
+                _keyboardInput.ImeComposition = NativeMethods.GetCompositionString();
             }
 
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
@@ -224,70 +224,17 @@ public class ImGuiBackend : IBackend
             {
                 case MouseCursor.Arrow:
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Arrow);
-                    WindowsNative.SetCursor(WindowsNative.ArrowCursor);
+                    NativeMethods.SetCursor(NativeMethods.ArrowCursor);
                     break;
                 case MouseCursor.Beam:
                     ImGui.SetMouseCursor(ImGuiMouseCursor.TextInput);
-                    WindowsNative.SetCursor(WindowsNative.BeamCursor);
+                    NativeMethods.SetCursor(NativeMethods.BeamCursor);
                     break;
                 case MouseCursor.Hand:
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    WindowsNative.SetCursor(WindowsNative.HandCursor);
+                    NativeMethods.SetCursor(NativeMethods.HandCursor);
                     break;
             }
         }
     }
-}
-
-public static class WindowsNative
-{
-    [DllImport("imm32.dll", CharSet = CharSet.Unicode)]
-    private static extern IntPtr ImmGetContext(IntPtr hWnd);
-
-    [DllImport("imm32.dll", CharSet = CharSet.Unicode)]
-    private static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
-
-    [DllImport("imm32.dll", CharSet = CharSet.Unicode)]
-    private static extern int ImmGetCompositionString(IntPtr hIMC, uint dwIndex, byte[]? lpBuf, int dwBufLen);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetFocus();
-
-    private const uint GCS_COMPSTR = 0x0008;
-
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern IntPtr SetCursor(IntPtr hCursor);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
-
-    private static int IDC_ARROW = 32512;
-    private static int IDC_IBEAM = 32513;
-    private static int IDC_HAND = 32649;
-
-    public static string GetCompositionString()
-    {
-        IntPtr hWnd = GetFocus(); // Get the handle to the active window
-        IntPtr hIMC = ImmGetContext(hWnd); // Get the Input Context
-        try
-        {
-            int strLen = ImmGetCompositionString(hIMC, GCS_COMPSTR, null, 0);
-            if (strLen > 0)
-            {
-                byte[]? buffer = new byte[strLen];
-                ImmGetCompositionString(hIMC, GCS_COMPSTR, buffer, strLen);
-                return Encoding.Unicode.GetString(buffer);
-            }
-
-            return string.Empty;
-        }
-        finally
-        {
-            ImmReleaseContext(hWnd, hIMC);
-        }
-    }
-
-    public static IntPtr ArrowCursor = LoadCursor(IntPtr.Zero, IDC_ARROW);
-    public static IntPtr BeamCursor = LoadCursor(IntPtr.Zero, IDC_IBEAM);
-    public static IntPtr HandCursor = LoadCursor(IntPtr.Zero, IDC_HAND);
 }
