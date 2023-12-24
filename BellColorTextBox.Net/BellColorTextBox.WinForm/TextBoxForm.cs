@@ -105,14 +105,14 @@ public class TextBoxControl : UserControl
 
     protected override void OnScroll(ScrollEventArgs se)
     {
-        Invalidate();
         base.OnScroll(se);
+        Invalidate();
     }
 
     protected override void OnResize(EventArgs e)
     {
-        Invalidate();
         base.OnResize(e);
+        Invalidate();
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -121,6 +121,8 @@ public class TextBoxControl : UserControl
         _backend.Graphics = e.Graphics;
 
         AutoScrollMinSize = new Size((int)_backend.PageSize.X - SystemInformation.VerticalScrollBarWidth, (int)_backend.PageSize.Y);
+
+        _textBox.Tick();
         _textBox.Render(new Vector2(HorizontalScroll.Value, VerticalScroll.Value), new Vector2(Width, Height));
     }
 

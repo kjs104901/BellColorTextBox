@@ -70,6 +70,15 @@ internal class WinFormBackend : IBackend
         return rect.Width;
     }
 
+    /*
+    public float GetCharWidth(char c)
+    {
+        Size sz2 = TextRenderer.MeasureText("<" + c.ToString() + ">", _control.Font);
+        Size sz3 = TextRenderer.MeasureText("<>", _control.Font);
+        return sz2.Width - sz3.Width + 1;
+    }
+    */
+
     public string GetClipboard()
     {
         return Clipboard.GetText(TextDataFormat.Text);
@@ -168,7 +177,7 @@ internal class WinFormBackend : IBackend
         
         Graphics.FillRectangle(brush, new RectangleF(startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
         
-        Graphics.FillRectangle(new SolidBrush(Color.Brown), (int)start.X, (int)start.Y, (int)end.X - (int)start.X, (int)end.Y - (int)start.Y);
+        Graphics.FillRectangle(new SolidBrush(Color.Brown), (int)startPoint.X, (int)startPoint.Y, (int)endPoint.X - (int)startPoint.X, (int)endPoint.Y - (int)startPoint.Y);
     }
 
     public void RenderText(Vector2 pos, string text, Vector4 color)
