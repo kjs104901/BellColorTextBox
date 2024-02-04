@@ -9,6 +9,7 @@ internal partial class RowManager
     internal static List<Row> Rows => TextBox.Ins.RowManager._rowsCache.Get();
     internal static void SetRowCacheDirty() => TextBox.Ins.RowManager.SetRowCacheDirty_();
     internal static void SetRowSelectionDirty() => TextBox.Ins.RowManager.SetRowSelectionDirty_();
+    internal static void SetRowSearchDirty() => TextBox.Ins.RowManager.SetRowSearchDirty_();
 }
 
 // Implementation
@@ -18,6 +19,7 @@ internal partial class RowManager  : IManager
     private readonly Cache<List<Row>> _rowsCache;
 
     private bool _isRowSelectionDirty = true;
+    private bool _isRowSearchDirty = true;
 
     internal RowManager()
     {
@@ -83,15 +85,29 @@ internal partial class RowManager  : IManager
         _isRowSelectionDirty = true;
     }
 
+    private void SetRowSearchDirty_()
+    {
+        _isRowSearchDirty = true;
+    }
+
     public void Tick()
     {
-        if (false == _isRowSelectionDirty)
-            return;
-        
-        foreach (Row row in _rows)
+        if (_isRowSelectionDirty)
         {
-            row.RowSelectionCache.SetDirty();
+            foreach (Row row in _rows)
+            {
+                row.RowSelectionCache.SetDirty();
+            }
+            _isRowSelectionDirty = false;
         }
-        _isRowSelectionDirty = false;
+        
+        if (_isRowSearchDirty)
+        {
+            foreach (Row row in _rows)
+            {
+                row.RowSearchCache.SetDirty();
+            }
+            _isRowSearchDirty = false;
+        }
     }
 }

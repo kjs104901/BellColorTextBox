@@ -44,7 +44,6 @@ internal partial class LineManager : IManager
     private readonly List<Line> _lines = new();
 
     private readonly List<Folding> _foldingList = new();
-    private readonly List<Folding> _lineFoldingList = new();
     private readonly List<Folding> _foldedList = new();
     private readonly Dictionary<int, Stack<int>> _foldingStacks = new();
 
@@ -155,8 +154,6 @@ internal partial class LineManager : IManager
             line.CommentStart = -1;
             line.StringRanges.Clear();
             line.StringStart = -1;
-
-            _lineFoldingList.Clear();
 
             int commentStart = blockCommentOn ? 0 : -1;
             int stringStart = (multilineStringOn || multilineStringNextLine) ? 0 : -1;

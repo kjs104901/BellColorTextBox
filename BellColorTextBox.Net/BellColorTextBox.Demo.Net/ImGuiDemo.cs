@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Bell;
 using Bell.Languages;
 using ImGuiNET;
@@ -61,6 +62,10 @@ class ImGuiDemo
         Names = new []{ "D2Coding", "MaruBuri", "NanumGothic" },
         Index = 0
     };
+    
+    private static int _line = 0;
+
+    private static byte[] _searchString = new byte[256];
 
     private static bool _isDebugMode = false;
 
@@ -195,6 +200,50 @@ class ImGuiDemo
                 if (ImGui.Checkbox("IsDebugMode", ref _isDebugMode))
                     imGuiBellTextBox.IsDebugMode = _isDebugMode;
 
+                ImGui.Separator();
+                if (ImGui.Button("Fold"))
+                {
+                    imGuiBellTextBox.FoldAll();
+                }
+                if (ImGui.Button("Unfold"))
+                {
+                    imGuiBellTextBox.UnfoldAll();
+                }
+                
+                ImGui.Separator();
+                ImGui.InputInt("Line", ref _line);
+                if (ImGui.Button("Focus"))
+                {
+                    imGuiBellTextBox.Focus(_line);
+                }
+                if (ImGui.Button("ScrollTo"))
+                {
+                    imGuiBellTextBox.ScrollTo(_line);
+                }
+
+                ImGui.Separator();
+                ImGui.InputText("SearchText", _searchString, (uint)_searchString.Length);
+                if (ImGui.Button("Search"))
+                {
+                    imGuiBellTextBox.Search(GetString(_searchString), StringComparison.OrdinalIgnoreCase);
+                }
+                if (ImGui.Button("ResetSearch"))
+                {
+                    imGuiBellTextBox.ResetSearch();
+                }
+                
+                ImGui.Text($"{imGuiBellTextBox.SearchIndex}/{imGuiBellTextBox.SearchCount}");
+                ImGui.SameLine();
+                if (ImGui.Button("<"))
+                {
+                    imGuiBellTextBox.SearchPrevious();
+                }
+                ImGui.SameLine();
+                if (ImGui.Button(">"))
+                {
+                    imGuiBellTextBox.SearchNext();
+                }
+                
                 // TextBox
                 ImGui.TableNextColumn();
 
@@ -221,6 +270,14 @@ class ImGuiDemo
         imGuiRenderer.Dispose();
         commandList.Dispose();
         graphicsDevice.Dispose();
+    }
+
+    private static string GetString(byte[] bytes)
+    {
+        int length = 0;
+        while (length < bytes.Length && bytes[length] != 0)
+            length++;
+        return Encoding.Default.GetString(bytes, 0, length);
     }
     
     private struct Option<T>

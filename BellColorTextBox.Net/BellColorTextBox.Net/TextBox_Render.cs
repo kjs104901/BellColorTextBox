@@ -15,7 +15,7 @@ public partial class TextBox
 
     internal readonly Stopwatch CaretBlinkStopwatch = new();
 
-    internal int LinesPerPage => (int)(_viewSize.Y / FontManager.GetLineHeight());
+    internal int LinesPerPage => (int)(ViewSize.Y / FontManager.GetLineHeight());
 
     public void Tick()
     {
@@ -34,16 +34,16 @@ public partial class TextBox
         FoldWidth = FontManager.GetFontReferenceWidth() * 2;
 
         Vector2 renderPageSize = PageSize;
-        if (renderPageSize.X < _viewSize.X)
-            renderPageSize.X = _viewSize.X;
-        if (renderPageSize.Y < _viewSize.Y)
-            renderPageSize.Y = _viewSize.Y;
+        if (renderPageSize.X < ViewSize.X)
+            renderPageSize.X = ViewSize.X;
+        if (renderPageSize.Y < ViewSize.Y)
+            renderPageSize.Y = ViewSize.Y;
         Backend.RenderPage(renderPageSize, ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector());
 
         LineNumberWidth = (StringPool<int>.Get(LineManager.Lines.Count).Length + 1) * FontManager.GetFontNumberWidth();
 
-        int rowStart = GetRowIndex(_viewPos, -3);
-        int rowEnd = GetRowIndex(_viewPos + _viewSize, 3);
+        int rowStart = GetRowIndex(ViewPos, -3);
+        int rowEnd = GetRowIndex(ViewPos + ViewSize, 3);
 
         for (int i = rowStart; i <= rowEnd; i++)
         {
@@ -64,7 +64,21 @@ public partial class TextBox
             {
                 Backend.RenderRectangle(new Vector2(rowStartX + row.RowSelection.SelectionStart, rowTextStartY),
                     new Vector2(rowStartX + row.RowSelection.SelectionEnd, rowTextEndY),
-                    Theme.BackgroundSelection.ToVector());
+                    Theme.BackgroundSelection.ToVector(), true);
+            }
+
+            if (row.RowSearch.Searched)
+            {
+                Backend.RenderRectangle(new Vector2(rowStartX + row.RowSearch.SearchStart, rowTextStartY),
+                    new Vector2(rowStartX + row.RowSearch.SearchEnd, rowTextEndY),
+                    Theme.BackgroundSearch.ToVector(), true);
+
+                if (row.RowSearch.Index == SearchManager.SearchIndex)
+                {
+                    Backend.RenderRectangle(new Vector2(rowStartX + row.RowSearch.SearchStart, rowTextStartY),
+                        new Vector2(rowStartX + row.RowSearch.SearchEnd, rowTextEndY),
+                        Theme.BackgroundSearchSelection.ToVector(), false);
+                }
             }
 
             if (LineManager.GetLine(row.LineSub.Coordinates.LineIndex, out Line line))
@@ -149,7 +163,7 @@ public partial class TextBox
                         Backend.RenderRectangle(
                             new Vector2(rowStartX + caretX - 1.0f, rowTextStartY),
                             new Vector2(rowStartX + caretX - 1.0f + FontManager.GetFontWidth(currString), rowTextEndY),
-                            Theme.Foreground.ToVector());
+                            Theme.Foreground.ToVector(), true);
                         Backend.RenderText(new Vector2(rowStartX + caretX - 1.0f, rowTextStartY),
                             currString, Theme.Background.ToVector());
                     }
@@ -190,9 +204,9 @@ public partial class TextBox
         //    }
         //}
         
-        Backend.RenderRectangle(new Vector2(_viewPos.X, _viewPos.Y),
-            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth - 2.0f, _viewPos.Y + _viewSize.Y),
-            ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector());
+        Backend.RenderRectangle(new Vector2(ViewPos.X, ViewPos.Y),
+            new Vector2(ViewPos.X + LineNumberWidth + FoldWidth - 2.0f, ViewPos.Y + ViewSize.Y),
+            ReadOnly ? Theme.BackgroundDimmed.ToVector() : Theme.Background.ToVector(), true);
 
         for (int i = rowStart; i <= rowEnd; i++)
         {
@@ -223,7 +237,7 @@ public partial class TextBox
                         ? Theme.Foreground
                         : Theme.ForegroundDimmed;
 
-                    Backend.RenderText(new Vector2(_viewPos.X + LineNumberWidth - lineIndexWidth, lineTextStartY),
+                    Backend.RenderText(new Vector2(ViewPos.X + LineNumberWidth - lineIndexWidth, lineTextStartY),
                         lineIndex,
                         lineIndexColor.ToVector());
                 }
@@ -233,14 +247,14 @@ public partial class TextBox
                     if (line.Folding.Folded)
                     {
                         Backend.RenderIcon(
-                            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            new Vector2(ViewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Fold,
                             Theme.Foreground.ToVector());
                     }
                     else
                     {
                         Backend.RenderIcon(
-                            new Vector2(_viewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
+                            new Vector2(ViewPos.X + LineNumberWidth + FoldWidth / 2.0f, lineY + (FontManager.GetLineHeight() / 2.0f)),
                             GuiIcon.Unfold,
                             Theme.Foreground.ToVector());
                     }

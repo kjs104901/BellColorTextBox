@@ -9,8 +9,8 @@ namespace Bell;
 
 public partial class TextBox
 {
-    private Vector2 _viewPos;
-    private Vector2 _viewSize;
+    internal Vector2 ViewPos;
+    internal Vector2 ViewSize;
 
     internal Vector2 PageSize;
 
@@ -314,8 +314,8 @@ public partial class TextBox
                 return;
         }
 
-        if (mouseInput.Position.X > _viewPos.X && mouseInput.Position.X < _viewPos.X + _viewSize.X &&
-            mouseInput.Position.Y > _viewPos.Y && mouseInput.Position.Y < _viewPos.Y + _viewSize.Y)
+        if (mouseInput.Position.X > ViewPos.X && mouseInput.Position.X < ViewPos.X + ViewSize.X &&
+            mouseInput.Position.Y > ViewPos.Y && mouseInput.Position.Y < ViewPos.Y + ViewSize.Y)
         {
             if (isFold)
             {
@@ -408,16 +408,16 @@ public partial class TextBox
         if (MouseAction.Dragging == mouseInput.LeftAction ||
             MouseAction.Dragging == mouseInput.MiddleAction)
         {
-            if (mouseInput.Position.Y - _viewPos.Y < 0)
+            if (mouseInput.Position.Y - ViewPos.Y < 0)
                 Backend.SetScrollY(Backend.GetScrollY() - ScrollSpeed);
 
-            else if (mouseInput.Position.Y - _viewPos.Y > _viewSize.Y)
+            else if (mouseInput.Position.Y - ViewPos.Y > ViewSize.Y)
                 Backend.SetScrollY(Backend.GetScrollY() + ScrollSpeed);
 
-            if (mouseInput.Position.X - _viewPos.X < 0)
+            if (mouseInput.Position.X - ViewPos.X < 0)
                 Backend.SetScrollX(Backend.GetScrollX() - ScrollSpeed);
 
-            else if (mouseInput.Position.X - _viewPos.X > _viewSize.X)
+            else if (mouseInput.Position.X - ViewPos.X > ViewSize.X)
                 Backend.SetScrollX(Backend.GetScrollX() + ScrollSpeed);
         }
 
@@ -429,8 +429,8 @@ public partial class TextBox
     {
         if (WrapMode.None != WrapMode)
         {
-            if (MathHelper.IsNotSame(viewSize.X, _viewSize.X) ||
-                MathHelper.IsNotSame(viewSize.Y, _viewSize.Y))
+            if (MathHelper.IsNotSame(viewSize.X, ViewSize.X) ||
+                MathHelper.IsNotSame(viewSize.Y, ViewSize.Y))
             {
                 foreach (Line line in LineManager.Lines)
                 {
@@ -441,12 +441,12 @@ public partial class TextBox
             }
         }
         
-        _viewPos = viewPos;
-        _viewSize = viewSize;
+        ViewPos = viewPos;
+        ViewSize = viewSize;
 
         if (WrapMode.Word == WrapMode || WrapMode.BreakWord == WrapMode)
         {
-            PageSize.X = _viewSize.X;
+            PageSize.X = ViewSize.X;
         }
         else
         {
@@ -479,7 +479,7 @@ public partial class TextBox
         isFold = false;
 
         float pageX = viewCoordinates.X - LineNumberWidth - FoldWidth;
-        float screenX = pageX - _viewPos.X;
+        float screenX = pageX - ViewPos.X;
         if (screenX < -FoldWidth)
         {
             isLineNumber = true;

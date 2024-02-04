@@ -165,19 +165,20 @@ internal class WinFormBackend : IBackend
         Graphics.FillRectangle(brush, new RectangleF(0, 0, size.X, size.Y));
     }
 
-    public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color)
+    public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color, bool filled)
     {
         if (null == Graphics)
             return;
 
-        using SolidBrush brush = new SolidBrush(VectorToColor(color));
-
         PointF startPoint = GetDrawPoint(start);
         PointF endPoint = GetDrawPoint(end);
-        
-        Graphics.FillRectangle(brush, new RectangleF(startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
-        
-        Graphics.FillRectangle(new SolidBrush(Color.Brown), (int)startPoint.X, (int)startPoint.Y, (int)endPoint.X - (int)startPoint.X, (int)endPoint.Y - (int)startPoint.Y);
+
+        if (filled)
+            Graphics.FillRectangle(new SolidBrush(VectorToColor(color)), new RectangleF(startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y));
+        else
+            Graphics.DrawRectangle(new Pen(VectorToColor(color)), startPoint.X, startPoint.Y, endPoint.X - startPoint.X, endPoint.Y - startPoint.Y)
+                ;
+        //Graphics.FillRectangle(new SolidBrush(Color.Brown), (int)startPoint.X, (int)startPoint.Y, (int)endPoint.X - (int)startPoint.X, (int)endPoint.Y - (int)startPoint.Y);
     }
 
     public void RenderText(Vector2 pos, string text, Vector4 color)

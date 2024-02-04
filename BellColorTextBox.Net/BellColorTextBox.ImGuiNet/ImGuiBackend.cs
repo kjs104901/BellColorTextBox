@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
 using Bell.Inputs;
 using ImGuiNET;
 
@@ -168,12 +166,15 @@ public class ImGuiBackend : IBackend
         ImGui.GetWindowDrawList().AddLine(startPos, endPos, ImGui.ColorConvertFloat4ToU32(color), thickness);
     }
 
-    public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color)
+    public void RenderRectangle(Vector2 start, Vector2 end, Vector4 color, bool filled)
     {
         var startPos = new Vector2(_drawPosOnPage.X + start.X, _drawPosOnPage.Y + start.Y);
         var endPos = new Vector2(_drawPosOnPage.X + end.X, _drawPosOnPage.Y + end.Y);
 
-        ImGui.GetWindowDrawList().AddRectFilled(startPos, endPos, ImGui.ColorConvertFloat4ToU32(color));
+        if (filled)
+            ImGui.GetWindowDrawList().AddRectFilled(startPos, endPos, ImGui.ColorConvertFloat4ToU32(color));
+        else
+            ImGui.GetWindowDrawList().AddRect(startPos, endPos, ImGui.ColorConvertFloat4ToU32(color));
     }
 
     public void SetClipboard(string text)

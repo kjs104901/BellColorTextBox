@@ -123,4 +123,15 @@ public class ImGuiTextBox
         ImGui.PopStyleColor();
         ImGui.PopStyleVar(5);
     }
+
+    public void FoldAll() => _textBox.FoldAll();
+    public void UnfoldAll() => _textBox.UnfoldAll();
+    public void Focus(int line) => _textBox.Focus(line);
+    public void ScrollTo(int line) => _textBox.ScrollTo(line);
+    public int SearchCount => _textBox.SearchCount;
+    public int SearchIndex => _textBox.SearchIndex;
+    public void Search(string text, StringComparison comparer = StringComparison.Ordinal) => _textBox.Search(text, comparer);
+    public void SearchPrevious() => _textBox.SearchPrevious();
+    public void SearchNext() => _textBox.SearchNext();
+    public void ResetSearch() => _textBox.ResetSearch();
 }

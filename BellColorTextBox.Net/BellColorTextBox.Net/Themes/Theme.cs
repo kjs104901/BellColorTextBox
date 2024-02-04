@@ -7,6 +7,8 @@ public class Theme
     public ColorStyle Background;
     public ColorStyle BackgroundDimmed;
     public ColorStyle BackgroundSelection;
+    public ColorStyle BackgroundSearch;
+    public ColorStyle BackgroundSearchSelection;
 
     // Foreground
     public ColorStyle Foreground;
@@ -34,12 +36,14 @@ public class Theme
     {
         return new Theme()
         {
-            Background            = new ColorStyle("#1E1E1E",       isSrgb: true),
-            BackgroundDimmed      = new ColorStyle("#2B2B2B",       isSrgb: true),
-            BackgroundSelection   = new ColorStyle("#ADD6FF26",     isSrgb: true),
+            Background                      = new ColorStyle("#1E1E1E",       isSrgb: true),
+            BackgroundDimmed                = new ColorStyle("#2B2B2B",       isSrgb: true),
+            BackgroundSelection             = new ColorStyle("#ADD6FF26",     isSrgb: true),
+            BackgroundSearch                = new ColorStyle("#613214",     isSrgb: true),
+            BackgroundSearchSelection       = new ColorStyle("#EEEEEE",     isSrgb: true),
             
-            Foreground            = new ColorStyle("#D4D4D4",       isSrgb: true),
-            ForegroundDimmed      = new ColorStyle("#767676",       isSrgb: true),
+            Foreground                      = new ColorStyle("#D4D4D4",       isSrgb: true),
+            ForegroundDimmed                = new ColorStyle("#767676",       isSrgb: true),
             
             TokenColors = new Dictionary<Token, ColorStyle>()
             {

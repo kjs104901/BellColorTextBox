@@ -17,6 +17,8 @@ public partial class TextBox
     internal readonly FontManager FontManager = new();
     internal readonly LineManager LineManager = new();
     internal readonly RowManager RowManager = new();
+    internal readonly ScrollManager ScrollManager = new();
+    internal readonly SearchManager SearchManager = new();
     
     internal readonly Logger Logger = new ();
     internal readonly CacheCounter CacheCounter = new();
@@ -50,6 +52,8 @@ public partial class TextBox
         _managers.Add(FontManager);
         _managers.Add(LineManager);
         _managers.Add(RowManager);
+        _managers.Add(ScrollManager);
+        _managers.Add(SearchManager);
     }
     
     public string Text
@@ -91,6 +95,8 @@ public partial class TextBox
         }
     }
     
+    public int SearchCount => SearchManager.SearchCount;
+    public int SearchIndex => SearchManager.SearchIndex;
 
     public string GetDebugString()
     {
