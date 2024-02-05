@@ -63,6 +63,7 @@ public partial class TextBox
             if (_wordWrapIndent == value)
                 return;
 
+            Ins = this;
             _wordWrapIndent = value;
             foreach (Line line in LineManager.Lines)
             {
@@ -91,6 +92,7 @@ public partial class TextBox
             if (_tabMode == value)
                 return;
 
+            Ins = this;
             _tabMode = value;
             _tabStringCache.SetDirty();
         }
@@ -105,6 +107,7 @@ public partial class TextBox
             if (_tabSize == value)
                 return;
 
+            Ins = this;
             _tabSize = value;
             _tabStringCache.SetDirty();
         }
@@ -119,6 +122,7 @@ public partial class TextBox
             if (_language == value)
                 return;
 
+            Ins = this;
             _language = value;
             LineManager.SetLanguageTokenDirty();
         }

@@ -111,6 +111,8 @@ public partial class TextBox
 
     public List<string> GetLogs()
     {
+        Ins = this;
+
         return Logger.GetLogs().Select(i => $"[{i.Item1}] {i.Item3}: ({i.Item2})").ToList();
     }
 }

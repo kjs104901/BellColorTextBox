@@ -5,14 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Bell</RootNamespace>
-    <PackageProjectUrl></PackageProjectUrl>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>0.1.2</Version>
+    <Authors>kjs104901</Authors>
+    <Company>kjs104901</Company>
+    <Description>BellColorTextBox backend</Description>
+    <Copyright>kjs104901</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/kjs104901/BellColorTextBox</RepositoryUrl>
-    <Version>0.1.3</Version>
-    <Company>kjs104901</Company>
-    <Authors>kjs104901</Authors>
-    <Description>Abstracted text box library</Description>
-    <Copyright>kjs104901</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
@@ -23,5 +23,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ImGui.NET" Version="1.89.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BellColorTextBox.Net\BellColorTextBox.Net.csproj" />
+  </ItemGroup>
 
 </Project>

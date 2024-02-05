@@ -19,6 +19,7 @@ public partial class TextBox
 
     public void Tick()
     {
+        Ins = this;
         foreach (var manager in _managers)
         {
             manager.Tick();
