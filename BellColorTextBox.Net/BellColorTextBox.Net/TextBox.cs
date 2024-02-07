@@ -90,7 +90,10 @@ public partial class TextBox
             
                 line.InsertChars(0, lineText.ToCharArray());
             }
+            
             CaretManager.ClearCarets();
+            SearchManager.Reset();
+            
             RowManager.SetRowCacheDirty();
         }
     }
