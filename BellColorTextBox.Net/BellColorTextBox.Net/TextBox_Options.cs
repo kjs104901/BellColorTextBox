@@ -44,6 +44,7 @@ public partial class TextBox
             if (_wrapMode == value)
                 return;
 
+            Ins = this;
             _wrapMode = value;
             foreach (Line line in LineManager.Lines)
             {

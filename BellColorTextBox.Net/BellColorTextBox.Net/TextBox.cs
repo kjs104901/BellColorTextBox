@@ -94,9 +94,24 @@ public partial class TextBox
             RowManager.SetRowCacheDirty();
         }
     }
-    
-    public int SearchCount => SearchManager.SearchCount;
-    public int SearchIndex => SearchManager.SearchIndex;
+
+    public int SearchCount
+    {
+        get
+        {
+            Ins = this;
+            return SearchManager.SearchCount;
+        }
+    }
+
+    public int SearchIndex
+    {
+        get
+        {
+            Ins = this;
+            return SearchManager.SearchIndex;
+        }
+    }
 
     public string GetDebugString()
     {
