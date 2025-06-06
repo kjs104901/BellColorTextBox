@@ -1,7 +1,10 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
 using Bell.Actions;
 using Bell.Data;
 using Bell.Utils;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Bell.Managers;
 
@@ -184,18 +187,38 @@ internal partial class CaretManager : IManager
         if (_carets.Count == 0)
             return;
 
+        bool selectionStarted = false;
+        int currentLineIndex = -1;
+
         _clipboard.Clear();
         foreach (Row row in RowManager.Rows)
         {
             if (row.RowSelection.Selected)
             {
+                if (selectionStarted && currentLineIndex + 1 < row.LineIndex) // Fold된 라인을 넘었을 때
+                {
+                    for (int foldedIndex = currentLineIndex + 1; foldedIndex < row.LineIndex; foldedIndex++)
+                    {
+                        if (LineManager.GetLine(foldedIndex, out Line foldedLine))
+                        {
+                            _clipboard.Add(foldedLine.String);
+                        }
+                    }
+                }
+
                 if (null != row.LineSub && LineManager.GetLine(row.LineSub.Coordinates.LineIndex, out Line line))
                 {
-                    string text = line.GetSubString(row.RowSelection.SelectionStartChar,
-                        row.RowSelection.SelectionEndChar);
+                    string text = line.GetSubString(row.RowSelection.SelectionStartChar, row.RowSelection.SelectionEndChar);
                     _clipboard.Add(text);
                 }
+
+                selectionStarted = true;
             }
+            else
+            {
+                selectionStarted = false;
+            }
+            currentLineIndex = row.LineIndex;
         }
 
         TextBox.Ins.Backend.SetClipboard(string.Join(TextBox.Ins.GetEolString(), _clipboard));

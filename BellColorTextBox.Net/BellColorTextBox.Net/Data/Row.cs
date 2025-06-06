@@ -89,7 +89,7 @@ internal class Row : IReusable
                         rowSelection.SelectionStart = startPosition;
                         rowSelection.SelectionEnd = endPosition;
                         rowSelection.SelectionStartChar = start.CharIndex;
-                        rowSelection.SelectionEndChar = end.CharIndex;
+                        rowSelection.SelectionEndChar = Math.Max(0, end.CharIndex - 1);
                         rowSelection.Selected = true;
                     }
                     else if (endLineSub.IsBiggerThan(LineSub))
@@ -114,7 +114,7 @@ internal class Row : IReusable
                         rowSelection.SelectionStart = 0.0f;
                         rowSelection.SelectionEnd = endPosition;
                         rowSelection.SelectionStartChar = 0;
-                        rowSelection.SelectionEndChar = end.CharIndex;
+                        rowSelection.SelectionEndChar = Math.Max(0, end.CharIndex - 1);
                         rowSelection.Selected = true;
                     }
                     else if (endLineSub.IsBiggerThan(LineSub))
